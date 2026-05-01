@@ -109,13 +109,11 @@ function ProfileCard({ profile }: { profile: DiscoveryProfile }) {
 
         {/* Verified badge */}
         {profile.isVerified && (
-          <BadgeCheck
-            size={15}
-            className={cn(
-              'absolute top-2.5 right-2.5 drop-shadow',
-              hasImage ? 'text-white' : 'text-ink',
-            )}
-          />
+          <div className="absolute top-2.5 right-2.5 w-5 h-5 rounded-full bg-blue-500 flex items-center justify-center shadow shadow-blue-500/40">
+            <svg width="10" height="10" viewBox="0 0 10 10" fill="none">
+              <path d="M2 5L4 7L8 3" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+          </div>
         )}
       </div>
     </Link>

@@ -5,7 +5,7 @@ import { usePathname } from 'next/navigation'
 import {
   User, LayoutGrid, Briefcase, FolderOpen, Link2,
   BookOpen, Phone, FileText, Bookmark, BarChart2,
-  Settings, LogOut, Compass,
+  Settings, LogOut, Compass, BadgeCheck,
 } from 'lucide-react'
 import { useQuery } from '@tanstack/react-query'
 import { Logo } from '@/components/icons/Logo'
@@ -27,6 +27,7 @@ const NAV_ITEMS = [
   { href: '/dashboard/resume', label: 'Resume', icon: FileText },
   { href: '/dashboard/saved', label: 'Saved', icon: Bookmark },
   { href: '/dashboard/analytics', label: 'Analytics', icon: BarChart2 },
+  { href: '/dashboard/settings/verification', label: 'Get Verified', icon: BadgeCheck },
 ]
 
 export function DashboardSidebar() {
@@ -81,24 +82,30 @@ export function DashboardSidebar() {
 
       {/* Nav */}
       <nav className="flex-1 px-3 py-4 flex flex-col gap-0.5">
-        {NAV_ITEMS.map(({ href, label, icon: Icon, exact }) => (
-          <Link
-            key={href}
-            href={href}
-            className={cn(
-              'flex items-center gap-3 px-3 py-2.5 text-meta transition-colors relative',
-              isActive(href, exact)
-                ? 'text-ink font-bold bg-bg-sunken'
-                : 'text-ink-soft hover:text-ink hover:bg-bg-sunken',
-            )}
-          >
-            {isActive(href, exact) && (
-              <span className="absolute left-0 top-1 bottom-1 w-0.5 bg-ink" />
-            )}
-            <Icon size={15} strokeWidth={1.5} />
-            {label}
-          </Link>
-        ))}
+        {NAV_ITEMS.map(({ href, label, icon: Icon, exact }) => {
+          const isVerifyLink = href === '/dashboard/settings/verification'
+          const active = isActive(href, exact)
+          return (
+            <Link
+              key={href}
+              href={href}
+              className={cn(
+                'flex items-center gap-3 px-3 py-2.5 text-meta transition-colors relative',
+                active
+                  ? 'text-ink font-bold bg-bg-sunken'
+                  : isVerifyLink
+                  ? 'text-blue-500 hover:bg-blue-50/50'
+                  : 'text-ink-soft hover:text-ink hover:bg-bg-sunken',
+              )}
+            >
+              {active && (
+                <span className="absolute left-0 top-1 bottom-1 w-0.5 bg-ink" />
+              )}
+              <Icon size={15} strokeWidth={1.5} />
+              {label}
+            </Link>
+          )
+        })}
       </nav>
 
       {/* Bottom */}

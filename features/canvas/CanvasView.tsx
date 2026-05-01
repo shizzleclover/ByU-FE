@@ -8,6 +8,7 @@ import {
   Mail, Phone, MessageCircle, Globe,
   Instagram, Twitter, Linkedin, Music2, ChevronRight,
 } from 'lucide-react'
+import { motion } from 'framer-motion'
 import { Hairline } from '@/components/editorial/Hairline'
 import { Overline } from '@/components/editorial/Overline'
 import { ScrollMask } from '@/components/motion/ScrollMask'
@@ -102,11 +103,7 @@ export function CanvasView({ canvas }: Props) {
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-3 flex-wrap">
               <h1 className="text-h1 font-bold text-ink leading-none">{profile.fullName}</h1>
-              {profile.isVerified && (
-                <span className="text-overline text-state-success border border-state-success px-2 py-0.5">
-                  VERIFIED
-                </span>
-              )}
+              {profile.isVerified && <VerifiedBadge />}
             </div>
 
             {profile.bio && (
@@ -219,6 +216,42 @@ export function CanvasView({ canvas }: Props) {
         onOutreach={logOutreach}
       />
     </div>
+  )
+}
+
+// ── Verified badge ──────────────────────────────────────────────────────────
+
+function VerifiedBadge() {
+  return (
+    <motion.div
+      className="relative inline-flex items-center justify-center w-7 h-7"
+      title="Student Verified"
+      initial={{ scale: 0 }}
+      animate={{ scale: 1 }}
+      transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+    >
+      {/* Pulse ring */}
+      <motion.span
+        className="absolute inset-0 rounded-full bg-blue-500/25"
+        animate={{ scale: [1, 1.5], opacity: [0.5, 0] }}
+        transition={{ duration: 2, repeat: Infinity, ease: 'easeOut' }}
+      />
+      {/* Circle */}
+      <div className="w-7 h-7 rounded-full bg-blue-500 flex items-center justify-center shadow-md shadow-blue-500/40">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+          <motion.path
+            d="M3 7L5.8 9.8L11 4"
+            stroke="white"
+            strokeWidth="1.8"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            initial={{ pathLength: 0 }}
+            animate={{ pathLength: 1 }}
+            transition={{ delay: 0.3, duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+          />
+        </svg>
+      </div>
+    </motion.div>
   )
 }
 
