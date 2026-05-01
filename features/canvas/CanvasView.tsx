@@ -18,6 +18,29 @@ import type { CanvasResponse, Contact } from '@/types/api'
 
 const SECTION_ORDER_DEFAULT = ['services', 'projects', 'links', 'stories', 'resume']
 
+const SERVICE_CATEGORY_LABELS: Record<string, string> = {
+  design: 'Design',
+  web_app_dev: 'Web & App Dev',
+  writing_editing: 'Writing & Editing',
+  photography_video: 'Photo & Video',
+  music_audio: 'Music & Audio',
+  tutoring_academic: 'Tutoring',
+  social_marketing: 'Marketing',
+  fashion_tailoring: 'Fashion & Tailoring',
+  hair_beauty: 'Hair & Beauty',
+  event_planning: 'Event Planning',
+  errands_tasks: 'Errands & Tasks',
+  other: 'Other',
+}
+
+function prettyCategory(raw: string) {
+  return SERVICE_CATEGORY_LABELS[raw] ?? raw.replace(/_/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase())
+}
+
+function prettyUrl(url: string) {
+  try { return new URL(url).hostname.replace(/^www\./, '') } catch { return url }
+}
+
 interface Props {
   canvas: CanvasResponse
 }
@@ -34,25 +57,41 @@ export function CanvasView({ canvas }: Props) {
 
   return (
     <div className="min-h-screen bg-bg">
-      {/* ── Header (always first) ── */}
-      <div className="container-content py-12">
+
+      {/* ── Hero (mobile: full-bleed image, desktop: side-by-side) ── */}
+      {profile.avatarUrl && (
+        <div className="relative w-full aspect-[4/3] md:hidden overflow-hidden">
+          <Image
+            src={profile.avatarUrl}
+            alt={profile.fullName}
+            fill
+            sizes="100vw"
+            className="object-cover object-top"
+            priority
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-bg via-bg/30 to-transparent" />
+        </div>
+      )}
+
+      {/* ── Header ── */}
+      <div className="container-content pt-6 pb-10 md:pt-12 md:pb-12">
         {/* Breadcrumb */}
-        <p className="text-overline text-ink-muted mb-8">
+        <p className="text-overline text-ink-muted mb-6 md:mb-8">
           <Link href="/" className="hover:text-ink transition-colors">BYU CONNECT</Link>
           {' / '}
           <span>{profile.username.toUpperCase()}</span>
         </p>
 
-        <div className="flex flex-col md:flex-row gap-10 items-start">
-          {/* Avatar */}
+        <div className="flex flex-col md:flex-row gap-8 md:gap-10 items-start">
+          {/* Avatar — desktop only (mobile shows hero banner above) */}
           {profile.avatarUrl && (
-            <ScrollMask className="shrink-0">
-              <div className="relative w-24 h-24 overflow-hidden">
+            <ScrollMask className="hidden md:block shrink-0">
+              <div className="relative w-32 h-32 overflow-hidden">
                 <Image
                   src={profile.avatarUrl}
                   alt={`${profile.fullName}'s photo`}
                   fill
-                  sizes="96px"
+                  sizes="128px"
                   className="object-cover"
                   priority
                 />
@@ -71,17 +110,18 @@ export function CanvasView({ canvas }: Props) {
             </div>
 
             {profile.bio && (
-              <p className="text-lead text-ink-soft mt-4 max-w-prose">{profile.bio}</p>
+              <p className="text-lead text-ink-soft mt-3 max-w-prose">{profile.bio}</p>
             )}
 
-            <p className="text-meta text-ink-muted mt-3">
-              {[profile.department, profile.year ? `Year ${profile.year}` : null]
-                .filter(Boolean)
-                .join(' · ')}
-            </p>
+            {(profile.department || profile.year) && (
+              <p className="text-meta text-ink-muted mt-2">
+                {[profile.department, profile.year ? `${profile.year}L` : null]
+                  .filter(Boolean)
+                  .join(' · ')}
+              </p>
+            )}
 
             <div className="mt-6 space-y-3">
-              {/* Direct contact buttons */}
               {contacts.length > 0 && (
                 <div className="flex flex-wrap gap-2">
                   {contacts.slice(0, 4).map((contact) => (
@@ -98,7 +138,6 @@ export function CanvasView({ canvas }: Props) {
                 </div>
               )}
 
-              {/* Utility buttons */}
               <div className="flex items-center gap-2">
                 {contacts.length === 0 && (
                   <button
@@ -161,7 +200,7 @@ export function CanvasView({ canvas }: Props) {
         }
       })}
 
-      {/* ── Footer of canvas ── */}
+      {/* ── Footer ── */}
       <div className="container-content py-8 border-t border-line mt-12">
         <p className="text-caption text-ink-muted">VIEWED {profile.viewCount.toLocaleString()} TIMES.</p>
         <Link
@@ -172,7 +211,6 @@ export function CanvasView({ canvas }: Props) {
         </Link>
       </div>
 
-      {/* Reach Out modal */}
       <ReachOutModal
         open={reachOutOpen}
         onClose={() => setReachOutOpen(false)}
@@ -184,7 +222,7 @@ export function CanvasView({ canvas }: Props) {
   )
 }
 
-// ── Contact button ─────────────────────────────────────────────────────────
+// ── Contact button ──────────────────────────────────────────────────────────
 
 const CONTACT_ICONS: Record<string, React.ReactNode> = {
   whatsapp:  <MessageCircle size={15} />,
@@ -216,16 +254,16 @@ function contactHref(contact: Contact): string {
     case 'email':    return `mailto:${contact.value}`
     case 'phone':    return `tel:${contact.value}`
     case 'instagram': {
-      const handle = contact.value.replace(/^@/, '')
-      return handle.startsWith('http') ? handle : `https://instagram.com/${handle}`
+      const h = contact.value.replace(/^@/, '')
+      return h.startsWith('http') ? h : `https://instagram.com/${h}`
     }
     case 'twitter': {
-      const handle = contact.value.replace(/^@/, '')
-      return handle.startsWith('http') ? handle : `https://x.com/${handle}`
+      const h = contact.value.replace(/^@/, '')
+      return h.startsWith('http') ? h : `https://x.com/${h}`
     }
     case 'tiktok': {
-      const handle = contact.value.replace(/^@/, '')
-      return handle.startsWith('http') ? handle : `https://tiktok.com/@${handle}`
+      const h = contact.value.replace(/^@/, '')
+      return h.startsWith('http') ? h : `https://tiktok.com/@${h}`
     }
     default:
       return contact.value.startsWith('http') ? contact.value : `https://${contact.value}`
@@ -235,7 +273,6 @@ function contactHref(contact: Contact): string {
 function ContactButton({ contact, onOutreach }: { contact: Contact; onOutreach: (id: string) => void }) {
   const label = contact.label || CONTACT_LABELS[contact.type] || contact.type
   const href = contactHref(contact)
-  const isPrimary = contact.isPrimary
 
   return (
     <a
@@ -244,7 +281,7 @@ function ContactButton({ contact, onOutreach }: { contact: Contact; onOutreach: 
       rel="noopener noreferrer"
       onClick={() => onOutreach(contact._id)}
       className={`inline-flex items-center gap-2 text-overline px-4 py-2.5 border transition-colors
-        ${isPrimary
+        ${contact.isPrimary
           ? 'bg-ink text-bg border-ink hover:bg-ink-soft hover:border-ink-soft'
           : 'border-line text-ink hover:border-ink'
         }`}
@@ -255,7 +292,7 @@ function ContactButton({ contact, onOutreach }: { contact: Contact; onOutreach: 
   )
 }
 
-// ── Section components ─────────────────────────────────────────────────────
+// ── Section components ──────────────────────────────────────────────────────
 
 function CanvasServices({ services, accentColor }: {
   services: CanvasResponse['services']
@@ -268,7 +305,7 @@ function CanvasServices({ services, accentColor }: {
         {services.map((svc) => (
           <Reveal key={svc._id}>
             <div className="py-8">
-              <Overline className="mb-2">{svc.category}</Overline>
+              <Overline className="mb-2 text-ink-muted">{prettyCategory(svc.category)}</Overline>
               <h3 className="text-h4 font-bold text-ink mt-1">{svc.title}</h3>
               {svc.description && (
                 <p className="text-body text-ink-soft mt-3 max-w-prose">{svc.description}</p>
@@ -302,27 +339,26 @@ function CanvasProjects({ projects, username }: {
         </span>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
         {projects.map((project, i) => (
           <Reveal key={project._id} delay={i * 0.08}>
-            <Link
-              href={`/${username}/projects/${project.slug}`}
-              className="group block"
-            >
-              {project.coverUrl && (
-                <ScrollMask>
-                  <div className="relative w-full aspect-[16/10] overflow-hidden">
-                    <Image
-                      src={project.coverUrl}
-                      alt={`Cover image for ${project.title}`}
-                      fill
-                      sizes="(max-width: 768px) 100vw, 50vw"
-                      className="object-cover transition-transform duration-700 group-hover:scale-[1.02]"
-                    />
+            <Link href={`/${username}/projects/${project.slug}`} className="group block">
+              <div className="relative w-full aspect-[16/10] overflow-hidden bg-bg-sunken">
+                {project.coverUrl ? (
+                  <Image
+                    src={project.coverUrl}
+                    alt={`Cover image for ${project.title}`}
+                    fill
+                    sizes="(max-width: 768px) 100vw, 50vw"
+                    className="object-cover transition-transform duration-700 group-hover:scale-[1.02]"
+                  />
+                ) : (
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <span className="text-overline text-ink-faint">NO COVER</span>
                   </div>
-                </ScrollMask>
-              )}
-              <div className="mt-4">
+                )}
+              </div>
+              <div className="mt-3">
                 <h3 className="text-h5 font-bold text-ink group-hover:underline underline-offset-4">
                   {project.title}
                 </h3>
@@ -350,11 +386,11 @@ function CanvasLinks({ links }: { links: CanvasResponse['links'] }) {
             href={link.url}
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center justify-between py-4 group hover:bg-bg-sunken -mx-4 px-4 transition-colors"
+            className="flex items-center justify-between py-4 gap-4 group hover:bg-bg-sunken -mx-4 px-4 transition-colors"
           >
-            <div>
+            <div className="min-w-0">
               <p className="text-h6 font-bold text-ink">{link.label}</p>
-              <p className="text-caption text-ink-muted">{link.url}</p>
+              <p className="text-caption text-ink-muted truncate">{prettyUrl(link.url)}</p>
             </div>
             <ExternalLink size={14} className="text-ink-muted group-hover:text-ink transition-colors shrink-0" />
           </a>
@@ -377,10 +413,10 @@ function CanvasStories({ stories, username }: {
           <Reveal key={story._id}>
             <Link
               href={`/${username}/stories/${story.slug}`}
-              className="flex gap-6 py-6 group hover:bg-bg-sunken -mx-4 px-4 transition-colors"
+              className="flex gap-4 md:gap-6 py-6 group hover:bg-bg-sunken -mx-4 px-4 transition-colors"
             >
               {story.coverUrl && (
-                <div className="relative w-[120px] h-[80px] shrink-0 overflow-hidden">
+                <div className="relative w-[90px] h-[60px] md:w-[120px] md:h-[80px] shrink-0 overflow-hidden">
                   <Image
                     src={story.coverUrl}
                     alt={story.title}
@@ -391,7 +427,7 @@ function CanvasStories({ stories, username }: {
                 </div>
               )}
               <div className="flex-1 min-w-0">
-                <h3 className="text-h5 font-bold text-ink group-hover:underline underline-offset-4">
+                <h3 className="text-h5 font-bold text-ink group-hover:underline underline-offset-4 line-clamp-2">
                   {story.title}
                 </h3>
                 {story.excerpt && (
@@ -417,9 +453,9 @@ function CanvasResume({ resume }: { resume: NonNullable<CanvasResponse['resume']
   return (
     <section className="container-content py-12">
       <Overline className="mb-8">RESUME</Overline>
-      <div className="flex items-center justify-between py-4 border-t border-b border-line">
-        <div>
-          <p className="text-h6 font-bold text-ink">{resume.filename}</p>
+      <div className="flex items-center justify-between py-4 border-t border-b border-line gap-4">
+        <div className="min-w-0">
+          <p className="text-h6 font-bold text-ink truncate">{resume.filename}</p>
           <p className="text-caption text-ink-muted">
             {(resume.size / 1024).toFixed(0)} KB ·{' '}
             {new Date(resume.createdAt).toLocaleDateString()}
@@ -429,7 +465,7 @@ function CanvasResume({ resume }: { resume: NonNullable<CanvasResponse['resume']
           href={resume.url}
           target="_blank"
           rel="noopener noreferrer"
-          className="text-overline text-ink hover:text-ink-soft transition-colors"
+          className="text-overline text-ink hover:text-ink-soft transition-colors shrink-0"
         >
           DOWNLOAD →
         </a>

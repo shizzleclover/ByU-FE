@@ -43,21 +43,21 @@ const CATEGORY_LABEL: Record<string, string> = Object.fromEntries(
   CATEGORIES.map((c) => [c.value, c.label])
 )
 
-function ProfileCard({ profile, compact }: { profile: DiscoveryProfile; compact?: boolean }) {
+function ProfileCard({ profile }: { profile: DiscoveryProfile }) {
+  const hasCover = !!profile.topProject?.coverUrl
+  const hasImage = hasCover || !!profile.avatarUrl
+
   return (
-    <Link
-      href={`/${profile.username}`}
-      className="group block border border-line bg-bg hover:bg-bg-sunken transition-colors"
-    >
-      {/* Cover / avatar */}
-      <div className={cn('relative overflow-hidden bg-bg-sunken', compact ? 'aspect-square' : 'aspect-[4/3]')}>
-        {profile.topProject?.coverUrl ? (
+    <Link href={`/${profile.username}`} className="group block">
+      <div className="relative aspect-[3/4] overflow-hidden bg-bg-sunken">
+        {/* Background image */}
+        {hasCover ? (
           <Image
-            src={profile.topProject.coverUrl}
-            alt={profile.topProject.title}
+            src={profile.topProject!.coverUrl!}
+            alt={profile.fullName}
             fill
             sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
-            className="object-cover transition-transform duration-500 group-hover:scale-[1.03]"
+            className="object-cover transition-transform duration-700 group-hover:scale-[1.04]"
           />
         ) : profile.avatarUrl ? (
           <Image
@@ -65,57 +65,67 @@ function ProfileCard({ profile, compact }: { profile: DiscoveryProfile; compact?
             alt={profile.fullName}
             fill
             sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
-            className="object-cover object-top"
+            className="object-cover object-top transition-transform duration-700 group-hover:scale-[1.04]"
           />
         ) : (
-          <div className="w-full h-full flex items-center justify-center">
-            <span className={cn('font-bold text-ink-ghost', compact ? 'text-h3' : 'text-h2')}>
+          <div className="absolute inset-0 flex items-center justify-center">
+            <span className="text-[72px] font-bold text-ink-ghost leading-none select-none">
               {profile.fullName[0]}
             </span>
           </div>
         )}
-        {profile.isVerified && (
-          <span className="absolute top-2 right-2 bg-bg/90 backdrop-blur-sm px-2 py-0.5 flex items-center gap-1">
-            <BadgeCheck size={11} className="text-ink" />
-            <span className="text-[10px] font-bold text-ink tracking-[0.08em]">VERIFIED</span>
-          </span>
-        )}
-      </div>
 
-      {/* Info */}
-      <div className={cn('p-3', compact && 'p-2')}>
-        <p className="text-[10px] font-bold tracking-[0.1em] text-ink-muted uppercase leading-none mb-1 truncate">
-          {profile.serviceCategories[0] ? CATEGORY_LABEL[profile.serviceCategories[0]] ?? profile.serviceCategories[0] : 'Student'}
-          {!compact && profile.department ? ` · ${profile.department}` : ''}
-        </p>
-        <p className={cn('font-bold text-ink leading-tight line-clamp-1', compact ? 'text-[13px]' : 'text-meta')}>
-          {profile.fullName}
-        </p>
-        {!compact && profile.bio && (
-          <p className="text-[11px] text-ink-muted mt-1 line-clamp-2 leading-snug">
-            {profile.bio}
-          </p>
+        {/* Gradient overlay */}
+        {hasImage && (
+          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/10 to-transparent" />
         )}
-        <p className={cn(
-          'text-[10px] font-bold tracking-[0.1em] text-ink mt-2 opacity-0 group-hover:opacity-100 transition-opacity',
-          compact && 'hidden',
-        )}>
-          VIEW CANVAS →
-        </p>
+
+        {/* Small avatar circle if showing project cover */}
+        {hasCover && profile.avatarUrl && (
+          <div className="absolute bottom-[52px] left-3">
+            <div className="relative w-8 h-8 rounded-full overflow-hidden border-2 border-white/40">
+              <Image src={profile.avatarUrl} alt="" fill sizes="32px" className="object-cover" />
+            </div>
+          </div>
+        )}
+
+        {/* Name + category pinned to bottom */}
+        <div className="absolute bottom-0 left-0 right-0 p-3">
+          <p className={cn(
+            'text-[10px] font-bold tracking-[0.12em] uppercase leading-none mb-1',
+            hasImage ? 'text-white/60' : 'text-ink-muted',
+          )}>
+            {profile.serviceCategories[0]
+              ? CATEGORY_LABEL[profile.serviceCategories[0]] ?? profile.serviceCategories[0]
+              : 'Student'}
+          </p>
+          <p className={cn(
+            'font-bold text-[15px] leading-tight truncate',
+            hasImage ? 'text-white' : 'text-ink',
+          )}>
+            {profile.fullName}
+          </p>
+        </div>
+
+        {/* Verified badge */}
+        {profile.isVerified && (
+          <BadgeCheck
+            size={15}
+            className={cn(
+              'absolute top-2.5 right-2.5 drop-shadow',
+              hasImage ? 'text-white' : 'text-ink',
+            )}
+          />
+        )}
       </div>
     </Link>
   )
 }
 
-function CardSkeleton({ compact }: { compact?: boolean }) {
+function CardSkeleton() {
   return (
-    <div className="border border-line animate-pulse">
-      <div className={cn('bg-bg-sunken', compact ? 'aspect-square' : 'aspect-[4/3]')} />
-      <div className={cn('space-y-2', compact ? 'p-2' : 'p-3')}>
-        <div className="h-2.5 bg-bg-sunken w-1/3 rounded" />
-        <div className="h-3.5 bg-bg-sunken w-2/3 rounded" />
-        {!compact && <div className="h-2.5 bg-bg-sunken w-full rounded" />}
-      </div>
+    <div className="animate-pulse">
+      <div className="aspect-[3/4] bg-bg-sunken" />
     </div>
   )
 }
@@ -358,18 +368,9 @@ function DiscoverContent() {
       {/* ── Results ──────────────────────────────────── */}
       <div className="px-5 md:px-12 lg:px-16 py-8 md:py-12">
         {isLoading ? (
-          <>
-            <div className={cn(
-              'grid gap-3',
-              viewMode === 'grid'
-                ? 'grid-cols-2 sm:grid-cols-3 md:grid-cols-4'
-                : 'grid-cols-2 md:grid-cols-1',
-            )}>
-              {[...Array(viewMode === 'grid' ? 8 : 6)].map((_, i) => (
-                <CardSkeleton key={i} compact={viewMode === 'grid'} />
-              ))}
-            </div>
-          </>
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
+            {[...Array(8)].map((_, i) => <CardSkeleton key={i} />)}
+          </div>
         ) : profiles.length === 0 ? (
           <div className="py-24 text-center">
             <p className="text-h2 font-bold text-ink-ghost leading-none">NOTHING HERE YET.</p>
@@ -385,25 +386,20 @@ function DiscoverContent() {
           </div>
         ) : (
           <>
-            {/* Count */}
             <p className="text-caption text-ink-muted mb-6">
               {profiles.length} student{profiles.length !== 1 ? 's' : ''}
               {category !== 'all' ? ` in ${CATEGORIES.find(c => c.value === category)?.label ?? category}` : ''}
             </p>
 
             {viewMode === 'grid' ? (
-              /* Grid view — default */
-              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
-                {profiles.map((p) => <ProfileCard key={p._id} profile={p} compact />)}
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2 md:gap-3">
+                {profiles.map((p) => <ProfileCard key={p._id} profile={p} />)}
               </div>
             ) : (
-              /* List view */
               <>
-                {/* Mobile list: larger 2-col cards */}
-                <div className="grid grid-cols-2 gap-3 md:hidden">
+                <div className="grid grid-cols-2 gap-2 md:hidden">
                   {profiles.map((p) => <ProfileCard key={p._id} profile={p} />)}
                 </div>
-                {/* Desktop list: editorial */}
                 <div className="hidden md:block">
                   <EditorialList profiles={profiles} />
                 </div>
