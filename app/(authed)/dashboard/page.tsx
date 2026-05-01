@@ -2,6 +2,7 @@
 
 import Link from 'next/link'
 import { useQuery } from '@tanstack/react-query'
+import { motion } from 'framer-motion'
 import { DashboardTopbar } from '@/components/layout/DashboardTopbar'
 import { Hairline } from '@/components/editorial/Hairline'
 import { apiGet } from '@/lib/api'
@@ -81,6 +82,55 @@ export default function DashboardPage() {
               />
             </div>
           </div>
+        )}
+
+        {/* Verification status */}
+        {user?.studentEmailVerifiedAt ? (
+          <div className="flex items-center gap-4 border border-blue-200 bg-blue-50/50 px-5 py-4">
+            <div className="relative shrink-0">
+              <motion.div
+                className="absolute inset-0 rounded-full bg-blue-500/20"
+                animate={{ scale: [1, 1.5], opacity: [0.5, 0] }}
+                transition={{ duration: 2, repeat: Infinity, ease: 'easeOut' }}
+              />
+              <div className="relative w-9 h-9 rounded-full bg-blue-500 flex items-center justify-center shadow shadow-blue-500/30">
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                  <motion.path
+                    d="M4 8L6.5 10.5L12 5"
+                    stroke="white"
+                    strokeWidth="1.8"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    initial={{ pathLength: 0 }}
+                    animate={{ pathLength: 1 }}
+                    transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+                  />
+                </svg>
+              </div>
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="text-meta font-bold text-ink">Student Verified</p>
+              <p className="text-caption text-ink-muted truncate">
+                {user.studentEmail ?? 'Student email confirmed'} · Verified{' '}
+                {new Date(user.studentEmailVerifiedAt).toLocaleDateString('en-US', { month: 'short', year: 'numeric' })}
+              </p>
+            </div>
+          </div>
+        ) : (
+          <Link
+            href="/dashboard/settings/verification"
+            className="flex items-center gap-4 border border-dashed border-line hover:border-blue-400 hover:bg-blue-50/30 px-5 py-4 transition-colors group"
+          >
+            <div className="w-9 h-9 rounded-full border-2 border-dashed border-line group-hover:border-blue-400 flex items-center justify-center transition-colors shrink-0">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                <path d="M4 8L6.5 10.5L12 5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="text-ink-muted group-hover:text-blue-500 transition-colors" />
+              </svg>
+            </div>
+            <div>
+              <p className="text-meta font-bold text-ink">Get Student Verified</p>
+              <p className="text-caption text-ink-muted">Verify your student email to earn a blue badge →</p>
+            </div>
+          </Link>
         )}
 
         {/* Stats */}

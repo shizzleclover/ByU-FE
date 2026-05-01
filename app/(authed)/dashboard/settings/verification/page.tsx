@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import Link from 'next/link'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
@@ -129,20 +130,41 @@ export default function VerificationPage() {
 
           {/* Already verified */}
           {isVerified ? (
-            <div className="border border-line p-8">
+            <div className="border border-blue-200 bg-blue-50/40 p-8">
               <VerifiedBadge />
-              <div className="border-t border-line pt-6 text-center">
+
+              <div className="mt-6 space-y-2 text-center">
+                <p className="text-h6 font-bold text-ink">You&apos;re already verified</p>
                 <p className="text-caption text-ink-muted">
-                  Verified with{' '}
-                  <span className="text-ink font-medium">{user?.studentEmail}</span>
+                  Your blue badge is live on your canvas and visible to everyone.
                 </p>
-                {user?.studentEmailVerifiedAt && (
-                  <p className="text-caption text-ink-faint mt-1">
-                    {new Date(user.studentEmailVerifiedAt).toLocaleDateString('en-US', {
-                      day: 'numeric', month: 'long', year: 'numeric',
-                    })}
-                  </p>
-                )}
+              </div>
+
+              {(user?.studentEmail || user?.studentEmailVerifiedAt) && (
+                <div className="mt-6 border-t border-blue-200 pt-5 space-y-1 text-center">
+                  {user.studentEmail && (
+                    <p className="text-caption text-ink-muted">
+                      Verified with <span className="text-ink font-medium">{user.studentEmail}</span>
+                    </p>
+                  )}
+                  {user.studentEmailVerifiedAt && (
+                    <p className="text-caption text-ink-faint">
+                      {new Date(user.studentEmailVerifiedAt).toLocaleDateString('en-US', {
+                        day: 'numeric', month: 'long', year: 'numeric',
+                      })}
+                    </p>
+                  )}
+                </div>
+              )}
+
+              <div className="mt-6 text-center">
+                <Link
+                  href={`/${user?.username}`}
+                  target="_blank"
+                  className="text-overline text-blue-500 hover:text-blue-600 transition-colors"
+                >
+                  VIEW YOUR CANVAS →
+                </Link>
               </div>
             </div>
           ) : (
