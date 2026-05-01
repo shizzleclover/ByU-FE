@@ -14,6 +14,18 @@ import type { Contact } from '@/types/api'
 
 const TYPES = ['whatsapp','instagram','twitter','email','phone','linkedin','tiktok','website','custom']
 
+const TYPE_PLACEHOLDER: Record<string, string> = {
+  whatsapp: '+2348012345678 (include country code)',
+  phone: '+2348012345678 (include country code)',
+  email: 'you@example.com',
+  instagram: '@username or profile URL',
+  twitter: '@username or profile URL',
+  tiktok: '@username or profile URL',
+  linkedin: 'linkedin.com/in/username or @handle',
+  website: 'https://yoursite.com',
+  custom: 'https://... or any value',
+}
+
 const schema = z.object({
   type: z.string().min(1),
   label: z.string().max(40).optional(),
@@ -32,7 +44,8 @@ export default function ContactsPage() {
     queryFn: () => apiGet<Contact[]>('/contacts'),
   })
 
-  const { register, handleSubmit, reset, control, formState: { isSubmitting } } = useForm<FormData>({ resolver: zodResolver(schema) })
+  const { register, handleSubmit, reset, control, watch, formState: { isSubmitting } } = useForm<FormData>({ resolver: zodResolver(schema) })
+  const selectedType = watch('type')
 
   const openAdd = () => { setEditing(null); reset({}); setShowForm(true) }
   const openEdit = (c: Contact) => { setEditing(c); reset({ type: c.type, label: c.label ?? '', value: c.value }); setShowForm(true) }
@@ -41,7 +54,10 @@ export default function ContactsPage() {
   const save = useMutation({
     mutationFn: (d: FormData) => editing ? apiPatch(`/contacts/${editing._id}`, d) : apiPost('/contacts', d),
     onSuccess: () => { qc.invalidateQueries({ queryKey: ['contacts', 'me'] }); toast.success(editing ? 'Updated.' : 'Added.'); close() },
-    onError: () => toast.error('Failed to save.'),
+    onError: (err: unknown) => {
+      const msg = err instanceof Error ? err.message : 'Failed to save.'
+      toast.error(msg)
+    },
   })
 
   const remove = useMutation({
@@ -88,7 +104,7 @@ export default function ContactsPage() {
               </div>
               <div>
                 <label className="text-overline text-ink-muted block mb-2">VALUE</label>
-                <input {...register('value')} placeholder="+2348000000000 / @username / url" className="w-full border-b border-line bg-transparent text-body text-ink pb-2 focus:outline-none focus:border-ink" />
+                <input {...register('value')} placeholder={TYPE_PLACEHOLDER[selectedType] ?? 'Enter value'} className="w-full border-b border-line bg-transparent text-body text-ink pb-2 focus:outline-none focus:border-ink" />
               </div>
               <div>
                 <label className="text-overline text-ink-muted block mb-2">LABEL (OPTIONAL)</label>

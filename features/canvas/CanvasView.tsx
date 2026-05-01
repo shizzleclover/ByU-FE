@@ -3,14 +3,18 @@
 import { useState } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
-import { Bookmark, Share2, AlertTriangle, ExternalLink } from 'lucide-react'
+import {
+  Bookmark, Share2, ExternalLink,
+  Mail, Phone, MessageCircle, Globe,
+  Instagram, Twitter, Linkedin, Music2, ChevronRight,
+} from 'lucide-react'
 import { Hairline } from '@/components/editorial/Hairline'
 import { Overline } from '@/components/editorial/Overline'
 import { ScrollMask } from '@/components/motion/ScrollMask'
 import { Reveal } from '@/components/motion/Reveal'
 import { ReachOutModal } from './ReachOutModal'
 import { apiPost } from '@/lib/api'
-import type { CanvasResponse } from '@/types/api'
+import type { CanvasResponse, Contact } from '@/types/api'
 
 const SECTION_ORDER_DEFAULT = ['services', 'projects', 'links', 'stories', 'resume']
 
@@ -76,19 +80,41 @@ export function CanvasView({ canvas }: Props) {
                 .join(' · ')}
             </p>
 
-            <div className="flex items-center gap-4 mt-6 flex-wrap">
-              <button
-                onClick={() => setReachOutOpen(true)}
-                className="text-overline px-6 py-3 bg-ink text-bg hover:bg-ink-soft transition-colors"
-              >
-                REACH OUT →
-              </button>
-              <button className="p-2 border border-line hover:border-ink transition-colors">
-                <Bookmark size={16} />
-              </button>
-              <button className="p-2 border border-line hover:border-ink transition-colors">
-                <Share2 size={16} />
-              </button>
+            <div className="mt-6 space-y-3">
+              {/* Direct contact buttons */}
+              {contacts.length > 0 && (
+                <div className="flex flex-wrap gap-2">
+                  {contacts.slice(0, 4).map((contact) => (
+                    <ContactButton key={contact._id} contact={contact} onOutreach={logOutreach} />
+                  ))}
+                  {contacts.length > 4 && (
+                    <button
+                      onClick={() => setReachOutOpen(true)}
+                      className="flex items-center gap-1.5 text-overline px-4 py-2.5 border border-line hover:border-ink transition-colors"
+                    >
+                      +{contacts.length - 4} MORE <ChevronRight size={13} />
+                    </button>
+                  )}
+                </div>
+              )}
+
+              {/* Utility buttons */}
+              <div className="flex items-center gap-2">
+                {contacts.length === 0 && (
+                  <button
+                    onClick={() => setReachOutOpen(true)}
+                    className="text-overline px-6 py-3 bg-ink text-bg hover:bg-ink-soft transition-colors"
+                  >
+                    REACH OUT →
+                  </button>
+                )}
+                <button className="p-2 border border-line hover:border-ink transition-colors" title="Save">
+                  <Bookmark size={16} />
+                </button>
+                <button className="p-2 border border-line hover:border-ink transition-colors" title="Share">
+                  <Share2 size={16} />
+                </button>
+              </div>
             </div>
           </div>
         </div>
@@ -155,6 +181,77 @@ export function CanvasView({ canvas }: Props) {
         onOutreach={logOutreach}
       />
     </div>
+  )
+}
+
+// ── Contact button ─────────────────────────────────────────────────────────
+
+const CONTACT_ICONS: Record<string, React.ReactNode> = {
+  whatsapp:  <MessageCircle size={15} />,
+  email:     <Mail size={15} />,
+  phone:     <Phone size={15} />,
+  instagram: <Instagram size={15} />,
+  twitter:   <Twitter size={15} />,
+  linkedin:  <Linkedin size={15} />,
+  tiktok:    <Music2 size={15} />,
+  website:   <Globe size={15} />,
+  custom:    <ExternalLink size={15} />,
+}
+
+const CONTACT_LABELS: Record<string, string> = {
+  whatsapp:  'WhatsApp',
+  email:     'Email',
+  phone:     'Call',
+  instagram: 'Instagram',
+  twitter:   'X / Twitter',
+  linkedin:  'LinkedIn',
+  tiktok:    'TikTok',
+  website:   'Website',
+  custom:    'Link',
+}
+
+function contactHref(contact: Contact): string {
+  switch (contact.type) {
+    case 'whatsapp': return `https://wa.me/${contact.value.replace(/\D/g, '')}`
+    case 'email':    return `mailto:${contact.value}`
+    case 'phone':    return `tel:${contact.value}`
+    case 'instagram': {
+      const handle = contact.value.replace(/^@/, '')
+      return handle.startsWith('http') ? handle : `https://instagram.com/${handle}`
+    }
+    case 'twitter': {
+      const handle = contact.value.replace(/^@/, '')
+      return handle.startsWith('http') ? handle : `https://x.com/${handle}`
+    }
+    case 'tiktok': {
+      const handle = contact.value.replace(/^@/, '')
+      return handle.startsWith('http') ? handle : `https://tiktok.com/@${handle}`
+    }
+    default:
+      return contact.value.startsWith('http') ? contact.value : `https://${contact.value}`
+  }
+}
+
+function ContactButton({ contact, onOutreach }: { contact: Contact; onOutreach: (id: string) => void }) {
+  const label = contact.label || CONTACT_LABELS[contact.type] || contact.type
+  const href = contactHref(contact)
+  const isPrimary = contact.isPrimary
+
+  return (
+    <a
+      href={href}
+      target={contact.type === 'email' || contact.type === 'phone' ? '_self' : '_blank'}
+      rel="noopener noreferrer"
+      onClick={() => onOutreach(contact._id)}
+      className={`inline-flex items-center gap-2 text-overline px-4 py-2.5 border transition-colors
+        ${isPrimary
+          ? 'bg-ink text-bg border-ink hover:bg-ink-soft hover:border-ink-soft'
+          : 'border-line text-ink hover:border-ink'
+        }`}
+    >
+      {CONTACT_ICONS[contact.type]}
+      {label.toUpperCase()}
+    </a>
   )
 }
 
