@@ -38,10 +38,10 @@ export interface Profile {
   username: string
   fullName: string
   bio?: string
-  avatar?: string
+  avatarUrl?: string
   avatarPublicId?: string
   department?: string
-  year?: number
+  year?: string
   accentColor?: string
   canvasLayout: string[]
   serviceCategories: string[]
@@ -189,9 +189,9 @@ export interface DiscoveryProfile {
   username: string
   fullName: string
   bio?: string
-  avatar?: string
+  avatarUrl?: string
   department?: string
-  year?: number
+  year?: string
   serviceCategories: string[]
   isVerified: boolean
   completenessScore: number
@@ -199,9 +199,8 @@ export interface DiscoveryProfile {
 }
 
 export interface DiscoveryResult {
-  profiles: DiscoveryProfile[]
-  nextCursor?: string
-  total: number
+  items: DiscoveryProfile[]
+  nextCursor?: string | null
 }
 
 // ─── Analytics ───────────────────────────────────────────────────────────────

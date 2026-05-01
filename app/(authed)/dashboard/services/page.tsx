@@ -13,7 +13,24 @@ import { AppSelect } from '@/components/ui/AppSelect'
 import { apiGet, apiPost, apiPatch, apiDelete } from '@/lib/api'
 import type { Service } from '@/types/api'
 
-const CATEGORIES = ['Design', 'Development', 'Writing', 'Photography', 'Video', 'Music', 'Tutoring', 'Marketing', 'Fashion', 'Crafts', 'Consulting', 'Other']
+const CATEGORIES = [
+  { value: 'design', label: 'Design' },
+  { value: 'web_app_dev', label: 'Web & App Development' },
+  { value: 'writing_editing', label: 'Writing & Editing' },
+  { value: 'photography_video', label: 'Photography & Video' },
+  { value: 'music_audio', label: 'Music & Audio' },
+  { value: 'tutoring_academic', label: 'Tutoring & Academic' },
+  { value: 'social_marketing', label: 'Social Media & Marketing' },
+  { value: 'fashion_tailoring', label: 'Fashion & Tailoring' },
+  { value: 'hair_beauty', label: 'Hair & Beauty' },
+  { value: 'event_planning', label: 'Event Planning' },
+  { value: 'errands_tasks', label: 'Errands & Tasks' },
+  { value: 'other', label: 'Other' },
+]
+
+const CATEGORY_LABEL: Record<string, string> = Object.fromEntries(
+  CATEGORIES.map((c) => [c.value, c.label])
+)
 
 const schema = z.object({
   category: z.string().min(1),
@@ -86,7 +103,7 @@ export default function ServicesPage() {
                   render={({ field }) => (
                     <AppSelect
                       variant="form"
-                      options={CATEGORIES.map((c) => ({ value: c, label: c }))}
+                      options={CATEGORIES}
                       value={field.value ?? ''}
                       onChange={field.onChange}
                       placeholder="Select category"
@@ -141,7 +158,7 @@ export default function ServicesPage() {
           {services.map((svc) => (
             <div key={svc._id} className="flex items-start justify-between py-5 gap-4">
               <div>
-                <p className="text-overline text-ink-muted">{svc.category}</p>
+                <p className="text-overline text-ink-muted">{CATEGORY_LABEL[svc.category] ?? svc.category}</p>
                 <p className="text-h6 font-bold text-ink mt-1">{svc.title}</p>
                 {svc.description && <p className="text-caption text-ink-muted mt-1 line-clamp-2">{svc.description}</p>}
                 <p className="text-overline text-ink-muted mt-2">

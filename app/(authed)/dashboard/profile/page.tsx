@@ -15,7 +15,7 @@ const schema = z.object({
   fullName: z.string().min(1).max(80),
   bio: z.string().max(280).optional(),
   department: z.string().optional(),
-  year: z.coerce.number().min(1).max(7).optional(),
+  year: z.enum(['100','200','300','400','500','600','700','800','PG']).optional(),
   accentColor: z
     .string()
     .regex(/^#[0-9A-Fa-f]{6}$/, 'Enter a valid hex color e.g. #FF5500')
@@ -43,7 +43,7 @@ export default function ProfilePage() {
         fullName: profile.fullName,
         bio: profile.bio ?? '',
         department: profile.department ?? '',
-        year: profile.year,
+        year: (profile.year as string | null) ?? undefined,
         accentColor: profile.accentColor ?? '',
         isPublic: profile.isPublic,
       })
@@ -56,7 +56,7 @@ export default function ProfilePage() {
     mutationFn: (data: FormData) => apiPatch('/profile/me', {
       ...data,
       accentColor: data.accentColor || null,
-      year: data.year || null,
+      year: data.year ?? null,
     }),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['profile', 'me'] })
@@ -71,7 +71,7 @@ export default function ProfilePage() {
     const fd = new FormData()
     fd.append('avatar', file)
     try {
-      await api.post('/profile/me/avatar', fd, { headers: { 'Content-Type': 'multipart/form-data' } })
+      await api.post('/profile/me/avatar', fd)
       qc.invalidateQueries({ queryKey: ['profile', 'me'] })
       toast.success('Avatar updated.')
     } catch {
@@ -98,7 +98,7 @@ export default function ProfilePage() {
           <p className="text-overline text-ink-muted mb-4">PHOTO</p>
           <div className="flex items-center gap-6">
             <div className="w-20 h-20 bg-bg-sunken overflow-hidden shrink-0">
-              {profile?.avatar && (
+              {profile?.avatarUrl && (
                 <img src={profile.avatar} alt="Avatar" className="w-full h-full object-cover" />
               )}
             </div>
@@ -107,7 +107,7 @@ export default function ProfilePage() {
                 Change photo
                 <input type="file" accept="image/*" className="hidden" onChange={uploadAvatar} />
               </label>
-              {profile?.avatar && (
+              {profile?.avatarUrl && (
                 <button
                   onClick={deleteAvatar}
                   className="text-caption text-state-error text-left hover:opacity-70 transition-opacity"
@@ -157,9 +157,9 @@ export default function ProfilePage() {
                 render={({ field }) => (
                   <AppSelect
                     variant="form"
-                    options={[1,2,3,4,5,6,7].map((y) => ({ value: String(y), label: `Year ${y}` }))}
-                    value={field.value ? String(field.value) : ''}
-                    onChange={(v) => field.onChange(v ? Number(v) : undefined)}
+                    options={['100','200','300','400','500','600','700','800','PG'].map((l) => ({ value: l, label: l === 'PG' ? 'Postgraduate' : `${l} Level` }))}
+                    value={field.value ?? ''}
+                    onChange={(v) => field.onChange(v || undefined)}
                     placeholder="Select year"
                   />
                 )}

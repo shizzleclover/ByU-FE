@@ -29,7 +29,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     openGraph: {
       title: `${canvas.profile.fullName} — ByU Connect`,
       description: canvas.profile.bio,
-      images: canvas.profile.avatar ? [canvas.profile.avatar] : [],
+      images: canvas.profile.avatarUrl ? [canvas.profile.avatarUrl] : [],
     },
   }
 }

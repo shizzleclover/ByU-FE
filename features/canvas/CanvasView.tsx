@@ -41,11 +41,11 @@ export function CanvasView({ canvas }: Props) {
 
         <div className="flex flex-col md:flex-row gap-10 items-start">
           {/* Avatar */}
-          {profile.avatar && (
+          {profile.avatarUrl && (
             <ScrollMask className="shrink-0">
               <div className="relative w-24 h-24 overflow-hidden">
                 <Image
-                  src={profile.avatar}
+                  src={profile.avatarUrl}
                   alt={`${profile.fullName}'s photo`}
                   fill
                   className="object-cover"

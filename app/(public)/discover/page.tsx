@@ -13,8 +13,19 @@ import { cn } from '@/lib/utils'
 import type { DiscoveryResult, DiscoveryProfile } from '@/types/api'
 
 const CATEGORIES = [
-  'All', 'Design', 'Development', 'Writing', 'Photography',
-  'Video', 'Music', 'Tutoring', 'Marketing', 'Fashion', 'Crafts', 'Consulting',
+  { value: 'all', label: 'All' },
+  { value: 'design', label: 'Design' },
+  { value: 'web_app_dev', label: 'Development' },
+  { value: 'writing_editing', label: 'Writing' },
+  { value: 'photography_video', label: 'Photo & Video' },
+  { value: 'music_audio', label: 'Music' },
+  { value: 'tutoring_academic', label: 'Tutoring' },
+  { value: 'social_marketing', label: 'Marketing' },
+  { value: 'fashion_tailoring', label: 'Fashion' },
+  { value: 'hair_beauty', label: 'Hair & Beauty' },
+  { value: 'event_planning', label: 'Events' },
+  { value: 'errands_tasks', label: 'Errands' },
+  { value: 'other', label: 'Other' },
 ]
 
 const SORT_OPTIONS = [
@@ -24,8 +35,8 @@ const SORT_OPTIONS = [
 ]
 
 const CATEGORY_OPTIONS = CATEGORIES.map((c) => ({
-  value: c,
-  label: c === 'All' ? 'All Categories' : c,
+  value: c.value,
+  label: c.value === 'all' ? 'All Categories' : c.label,
 }))
 
 // Mobile profile card
@@ -44,9 +55,9 @@ function ProfileCard({ profile }: { profile: DiscoveryProfile }) {
             fill
             className="object-cover transition-transform duration-500 group-hover:scale-[1.03]"
           />
-        ) : profile.avatar ? (
+        ) : profile.avatarUrl ? (
           <Image
-            src={profile.avatar}
+            src={profile.avatarUrl}
             alt={profile.fullName}
             fill
             className="object-cover object-top"
@@ -106,7 +117,7 @@ export default function DiscoverPage() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const [search, setSearch] = useState(searchParams.get('q') ?? '')
-  const [category, setCategory] = useState(searchParams.get('category') ?? 'All')
+  const [category, setCategory] = useState(searchParams.get('category') ?? 'all')
   const [verified, setVerified] = useState(searchParams.get('verified') === 'true')
   const [sort, setSort] = useState(searchParams.get('sort') ?? 'featured')
   const [filtersOpen, setFiltersOpen] = useState(false)
@@ -116,21 +127,21 @@ export default function DiscoverPage() {
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading } = useInfiniteQuery({
     queryKey: ['discovery', { search, category, verified, sort }],
     queryFn: ({ pageParam }) =>
-      apiGet<DiscoveryResult>('/discovery', {
+      apiGet<DiscoveryResult>('/discover', {
         q: search || undefined,
-        category: category !== 'All' ? category : undefined,
+        category: category !== 'all' ? category : undefined,
         verified: verified || undefined,
         sort,
         cursor: pageParam as string | undefined,
         limit: 20,
       }),
     initialPageParam: undefined as string | undefined,
-    getNextPageParam: (last) => last.nextCursor,
+    getNextPageParam: (last) => last.nextCursor ?? undefined,
     staleTime: 60_000,
   })
 
-  const profiles = data?.pages.flatMap((p) => p.profiles) ?? []
-  const activeFilters = (category !== 'All' ? 1 : 0) + (verified ? 1 : 0) + (sort !== 'featured' ? 1 : 0)
+  const profiles = data?.pages.flatMap((p) => p.items ?? []) ?? []
+  const activeFilters = (category !== 'all' ? 1 : 0) + (verified ? 1 : 0) + (sort !== 'featured' ? 1 : 0)
 
   // Infinite scroll
   useEffect(() => {
@@ -148,7 +159,7 @@ export default function DiscoverPage() {
   useEffect(() => {
     const params = new URLSearchParams()
     if (search) params.set('q', search)
-    if (category !== 'All') params.set('category', category)
+    if (category !== 'all') params.set('category', category)
     if (verified) params.set('verified', 'true')
     if (sort !== 'featured') params.set('sort', sort)
     router.replace(`/discover${params.toString() ? `?${params}` : ''}`, { scroll: false })
@@ -238,16 +249,16 @@ export default function DiscoverPage() {
         >
           {CATEGORIES.map((cat) => (
             <button
-              key={cat}
-              onClick={() => setCategory(cat)}
+              key={cat.value}
+              onClick={() => setCategory(cat.value)}
               className={cn(
                 'shrink-0 px-3 py-1.5 text-[11px] font-bold tracking-[0.08em] uppercase border transition-colors whitespace-nowrap',
-                category === cat
+                category === cat.value
                   ? 'bg-ink text-bg border-ink'
                   : 'bg-transparent text-ink-soft border-line hover:border-ink hover:text-ink',
               )}
             >
-              {cat === 'All' ? 'All' : cat}
+              {cat.label}
             </button>
           ))}
         </div>
@@ -305,9 +316,9 @@ export default function DiscoverPage() {
           <div className="py-24 text-center">
             <p className="text-h2 font-bold text-ink-ghost leading-none">NOTHING HERE YET.</p>
             <p className="text-lead text-ink-muted mt-4 mb-8">Try broadening your filters.</p>
-            {(category !== 'All' || verified || search) && (
+            {(category !== 'all' || verified || search) && (
               <button
-                onClick={() => { setCategory('All'); setVerified(false); setSearch('') }}
+                onClick={() => { setCategory('all'); setVerified(false); setSearch('') }}
                 className="text-overline text-ink border-b border-ink hover:text-ink-soft transition-colors pb-0.5"
               >
                 CLEAR FILTERS
@@ -319,7 +330,7 @@ export default function DiscoverPage() {
             {/* Count */}
             <p className="text-caption text-ink-muted mb-6">
               {profiles.length} student{profiles.length !== 1 ? 's' : ''}
-              {category !== 'All' ? ` in ${category}` : ''}
+              {category !== 'all' ? ` in ${CATEGORIES.find(c => c.value === category)?.label ?? category}` : ''}
             </p>
 
             {/* Mobile: 2-col card grid */}

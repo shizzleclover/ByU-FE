@@ -82,10 +82,10 @@ export function EditorialList({ profiles, className }: Props) {
                       className="object-cover"
                     />
                   </div>
-                ) : hovered.avatar ? (
+                ) : hovered.avatarUrl ? (
                   <div className="relative w-full aspect-[4/3] overflow-hidden bg-bg-sunken">
                     <Image
-                      src={hovered.avatar}
+                      src={hovered.avatarUrl}
                       alt={hovered.fullName}
                       fill
                       className="object-cover object-top"

@@ -9,7 +9,7 @@ import { useAuth } from '@/hooks/useAuth'
 import type { AnalyticsOverview, Profile } from '@/types/api'
 
 const COMPLETENESS_ITEMS = [
-  { key: 'avatar', label: 'Add a profile photo', href: '/dashboard/profile' },
+  { key: 'avatarUrl', label: 'Add a profile photo', href: '/dashboard/profile' },
   { key: 'bio', label: 'Write your bio', href: '/dashboard/profile' },
   { key: 'services', label: 'Add a service', href: '/dashboard/services' },
   { key: 'projects', label: 'Add a project', href: '/dashboard/projects' },
@@ -58,7 +58,7 @@ export default function DashboardPage() {
             <div className="space-y-2">
               {COMPLETENESS_ITEMS.map(({ key, label, href }) => {
                 const done =
-                  key === 'avatar' ? !!profile.avatar :
+                  key === 'avatarUrl' ? !!profile.avatarUrl :
                   key === 'bio' ? !!profile.bio :
                   false // services/projects/contacts tracked by count > 0
                 return (

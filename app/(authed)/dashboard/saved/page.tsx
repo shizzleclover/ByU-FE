@@ -65,8 +65,8 @@ export default function SavedPage() {
                 </button>
                 <Link href={`/${profile.username}`} className="block p-4">
                   <div className="w-12 h-12 rounded-full overflow-hidden bg-bg-sunken mb-3">
-                    {profile.avatar ? (
-                      <Image src={profile.avatar} alt={profile.fullName} width={48} height={48} className="object-cover" />
+                    {profile.avatarUrl ? (
+                      <Image src={profile.avatarUrl} alt={profile.fullName} width={48} height={48} className="object-cover" />
                     ) : (
                       <div className="w-full h-full flex items-center justify-center text-ink-faint text-overline">
                         {profile.fullName.charAt(0)}

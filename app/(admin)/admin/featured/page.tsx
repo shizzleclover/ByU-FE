@@ -131,8 +131,8 @@ export default function AdminFeaturedPage() {
                     className="w-full text-left flex items-center gap-3 px-4 py-3 hover:bg-bg-sunken transition-colors"
                   >
                     <div className="w-7 h-7 rounded-full overflow-hidden bg-bg-sunken shrink-0">
-                      {user.avatar ? (
-                        <Image src={user.avatar} alt={user.fullName} width={28} height={28} className="object-cover" />
+                      {user.avatarUrl ? (
+                        <Image src={user.avatarUrl} alt={user.fullName} width={28} height={28} className="object-cover" />
                       ) : (
                         <div className="w-full h-full flex items-center justify-center text-ink-faint text-overline">
                           {user.fullName.charAt(0)}
