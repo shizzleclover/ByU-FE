@@ -7,8 +7,7 @@ const AUTH_PATHS = ['/signin', '/signup', '/forgot-password', '/reset-password']
 
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl
-  const refreshToken = request.cookies.get('refreshToken')?.value
-  const isAuthenticated = !!refreshToken
+  const isAuthenticated = !!request.cookies.get('auth_present')?.value
 
   // Redirect authenticated users away from auth pages
   if (AUTH_PATHS.some((p) => pathname.startsWith(p))) {

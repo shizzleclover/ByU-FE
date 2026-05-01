@@ -13,8 +13,11 @@ export function setAccessToken(token: string | null) {
   if (typeof window !== 'undefined') {
     if (token) {
       sessionStorage.setItem('access_token', token)
+      // Indicator cookie readable by middleware (not a secret — real auth is httpOnly refresh token)
+      document.cookie = 'auth_present=1; path=/; max-age=604800; SameSite=Lax'
     } else {
       sessionStorage.removeItem('access_token')
+      document.cookie = 'auth_present=; path=/; max-age=0; SameSite=Lax'
     }
   }
 }
