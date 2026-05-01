@@ -43,7 +43,9 @@ export default function ProfilePage() {
         fullName: profile.fullName,
         bio: profile.bio ?? '',
         department: profile.department ?? '',
-        year: (profile.year as string | null) ?? undefined,
+        year: (['100','200','300','400','500','600','700','800','PG'].includes(profile.year ?? '')
+          ? profile.year as '100'|'200'|'300'|'400'|'500'|'600'|'700'|'800'|'PG'
+          : undefined),
         accentColor: profile.accentColor ?? '',
         isPublic: profile.isPublic,
       })
@@ -99,7 +101,7 @@ export default function ProfilePage() {
           <div className="flex items-center gap-6">
             <div className="w-20 h-20 bg-bg-sunken overflow-hidden shrink-0">
               {profile?.avatarUrl && (
-                <img src={profile.avatar} alt="Avatar" className="w-full h-full object-cover" />
+                <img src={profile.avatarUrl} alt="Avatar" className="w-full h-full object-cover" />
               )}
             </div>
             <div className="flex flex-col gap-2">

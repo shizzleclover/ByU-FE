@@ -1,3 +1,4 @@
+import React from 'react'
 import { cn } from '@/lib/utils'
 
 type Variant = 'content' | 'narrow' | 'prose' | 'wide'
@@ -6,7 +7,7 @@ interface Props {
   children: React.ReactNode
   variant?: Variant
   className?: string
-  as?: keyof JSX.IntrinsicElements
+  as?: React.ElementType
 }
 
 const variantClass: Record<Variant, string> = {

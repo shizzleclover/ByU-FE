@@ -9,7 +9,7 @@ interface Props {
   children: React.ReactNode
   delay?: number
   className?: string
-  as?: keyof JSX.IntrinsicElements
+  as?: React.ElementType
 }
 
 export function Reveal({ children, delay = 0, className, as: Tag = 'div' }: Props) {

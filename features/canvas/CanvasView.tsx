@@ -298,7 +298,7 @@ function CanvasStories({ stories, username }: {
                   <p className="text-caption text-ink-muted mt-1 line-clamp-1">{story.excerpt}</p>
                 )}
                 <p className="text-overline text-ink-muted mt-2">
-                  {story.readingTime} MIN READ
+                  {story.readingTimeMinutes} MIN READ
                   {story.publishedAt
                     ? ` · ${new Date(story.publishedAt).toLocaleDateString('en-US', { month: 'short', year: 'numeric' })}`
                     : ''}

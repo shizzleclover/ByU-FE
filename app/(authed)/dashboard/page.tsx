@@ -86,9 +86,9 @@ export default function DashboardPage() {
         {/* Stats */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-0 border-t border-l border-line">
           {[
-            { label: 'PROFILE VIEWS (30D)', value: analytics?.views30d ?? '—' },
-            { label: 'OUTREACH CLICKS (30D)', value: analytics?.outreach30d ?? '—' },
-            { label: 'SAVES', value: analytics?.savedByCount ?? '—' },
+            { label: 'PROFILE VIEWS (30D)', value: analytics?.viewsLast30d ?? '—' },
+            { label: 'OUTREACH CLICKS (30D)', value: analytics?.outreachClicksLast30d ?? '—' },
+            { label: 'TOTAL VIEWS', value: analytics?.totalViews ?? '—' },
           ].map((stat) => (
             <div key={stat.label} className="border-r border-b border-line p-6">
               <p className="text-overline text-ink-muted">{stat.label}</p>

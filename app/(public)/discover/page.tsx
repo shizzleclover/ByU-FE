@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { useSearchParams, useRouter } from 'next/navigation'
 import { useInfiniteQuery } from '@tanstack/react-query'
-import { Search, SlidersHorizontal, X, BadgeCheck } from 'lucide-react'
+import { Search, SlidersHorizontal, X, BadgeCheck, LayoutGrid, List } from 'lucide-react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { EditorialList } from '@/components/editorial/EditorialList'
@@ -39,15 +39,18 @@ const CATEGORY_OPTIONS = CATEGORIES.map((c) => ({
   label: c.value === 'all' ? 'All Categories' : c.label,
 }))
 
-// Mobile profile card
-function ProfileCard({ profile }: { profile: DiscoveryProfile }) {
+const CATEGORY_LABEL: Record<string, string> = Object.fromEntries(
+  CATEGORIES.map((c) => [c.value, c.label])
+)
+
+function ProfileCard({ profile, compact }: { profile: DiscoveryProfile; compact?: boolean }) {
   return (
     <Link
       href={`/${profile.username}`}
       className="group block border border-line bg-bg hover:bg-bg-sunken transition-colors"
     >
       {/* Cover / avatar */}
-      <div className="relative aspect-[4/3] overflow-hidden bg-bg-sunken">
+      <div className={cn('relative overflow-hidden bg-bg-sunken', compact ? 'aspect-square' : 'aspect-[4/3]')}>
         {profile.topProject?.coverUrl ? (
           <Image
             src={profile.topProject.coverUrl}
@@ -64,7 +67,7 @@ function ProfileCard({ profile }: { profile: DiscoveryProfile }) {
           />
         ) : (
           <div className="w-full h-full flex items-center justify-center">
-            <span className="text-h2 font-bold text-ink-ghost">
+            <span className={cn('font-bold text-ink-ghost', compact ? 'text-h3' : 'text-h2')}>
               {profile.fullName[0]}
             </span>
           </div>
@@ -78,20 +81,23 @@ function ProfileCard({ profile }: { profile: DiscoveryProfile }) {
       </div>
 
       {/* Info */}
-      <div className="p-3">
-        <p className="text-[10px] font-bold tracking-[0.1em] text-ink-muted uppercase leading-none mb-1">
-          {profile.serviceCategories[0] ?? 'Student'}
-          {profile.department ? ` · ${profile.department}` : ''}
+      <div className={cn('p-3', compact && 'p-2')}>
+        <p className="text-[10px] font-bold tracking-[0.1em] text-ink-muted uppercase leading-none mb-1 truncate">
+          {profile.serviceCategories[0] ? CATEGORY_LABEL[profile.serviceCategories[0]] ?? profile.serviceCategories[0] : 'Student'}
+          {!compact && profile.department ? ` · ${profile.department}` : ''}
         </p>
-        <p className="text-meta font-bold text-ink leading-tight line-clamp-1">
+        <p className={cn('font-bold text-ink leading-tight line-clamp-1', compact ? 'text-[13px]' : 'text-meta')}>
           {profile.fullName}
         </p>
-        {profile.bio && (
+        {!compact && profile.bio && (
           <p className="text-[11px] text-ink-muted mt-1 line-clamp-2 leading-snug">
             {profile.bio}
           </p>
         )}
-        <p className="text-[10px] font-bold tracking-[0.1em] text-ink mt-2 opacity-0 group-hover:opacity-100 transition-opacity">
+        <p className={cn(
+          'text-[10px] font-bold tracking-[0.1em] text-ink mt-2 opacity-0 group-hover:opacity-100 transition-opacity',
+          compact && 'hidden',
+        )}>
           VIEW CANVAS →
         </p>
       </div>
@@ -99,19 +105,20 @@ function ProfileCard({ profile }: { profile: DiscoveryProfile }) {
   )
 }
 
-// Skeleton card
-function CardSkeleton() {
+function CardSkeleton({ compact }: { compact?: boolean }) {
   return (
     <div className="border border-line animate-pulse">
-      <div className="aspect-[4/3] bg-bg-sunken" />
-      <div className="p-3 space-y-2">
+      <div className={cn('bg-bg-sunken', compact ? 'aspect-square' : 'aspect-[4/3]')} />
+      <div className={cn('space-y-2', compact ? 'p-2' : 'p-3')}>
         <div className="h-2.5 bg-bg-sunken w-1/3 rounded" />
         <div className="h-3.5 bg-bg-sunken w-2/3 rounded" />
-        <div className="h-2.5 bg-bg-sunken w-full rounded" />
+        {!compact && <div className="h-2.5 bg-bg-sunken w-full rounded" />}
       </div>
     </div>
   )
 }
+
+type ViewMode = 'grid' | 'list'
 
 export default function DiscoverPage() {
   const router = useRouter()
@@ -120,6 +127,7 @@ export default function DiscoverPage() {
   const [category, setCategory] = useState(searchParams.get('category') ?? 'all')
   const [verified, setVerified] = useState(searchParams.get('verified') === 'true')
   const [sort, setSort] = useState(searchParams.get('sort') ?? 'featured')
+  const [viewMode, setViewMode] = useState<ViewMode>('grid')
   const [filtersOpen, setFiltersOpen] = useState(false)
   const sentinelRef = useRef<HTMLDivElement>(null)
   const chipScrollRef = useRef<HTMLDivElement>(null)
@@ -197,7 +205,7 @@ export default function DiscoverPage() {
             )}
           </div>
 
-          {/* Desktop filters */}
+          {/* Desktop filters + view toggle */}
           <div className="hidden md:flex items-center gap-6">
             <AppSelect
               options={CATEGORY_OPTIONS}
@@ -226,20 +234,68 @@ export default function DiscoverPage() {
               onChange={setSort}
               className="min-w-[140px]"
             />
+
+            {/* View toggle */}
+            <div className="flex items-center border border-line">
+              <button
+                onClick={() => setViewMode('grid')}
+                className={cn(
+                  'p-1.5 transition-colors',
+                  viewMode === 'grid' ? 'bg-ink text-bg' : 'text-ink-muted hover:text-ink',
+                )}
+                title="Grid view"
+              >
+                <LayoutGrid size={14} />
+              </button>
+              <button
+                onClick={() => setViewMode('list')}
+                className={cn(
+                  'p-1.5 transition-colors',
+                  viewMode === 'list' ? 'bg-ink text-bg' : 'text-ink-muted hover:text-ink',
+                )}
+                title="List view"
+              >
+                <List size={14} />
+              </button>
+            </div>
           </div>
 
-          {/* Mobile filter toggle */}
-          <button
-            className="md:hidden flex items-center gap-1.5 text-caption text-ink-soft hover:text-ink transition-colors shrink-0"
-            onClick={() => setFiltersOpen((o) => !o)}
-          >
-            <SlidersHorizontal size={15} strokeWidth={1.5} />
-            {activeFilters > 0 && (
-              <span className="w-4 h-4 bg-ink text-bg text-[9px] font-bold flex items-center justify-center rounded-full">
-                {activeFilters}
-              </span>
-            )}
-          </button>
+          {/* Mobile: filter toggle + view toggle */}
+          <div className="md:hidden flex items-center gap-3 shrink-0">
+            {/* View toggle */}
+            <div className="flex items-center border border-line">
+              <button
+                onClick={() => setViewMode('grid')}
+                className={cn(
+                  'p-1.5 transition-colors',
+                  viewMode === 'grid' ? 'bg-ink text-bg' : 'text-ink-muted hover:text-ink',
+                )}
+              >
+                <LayoutGrid size={13} />
+              </button>
+              <button
+                onClick={() => setViewMode('list')}
+                className={cn(
+                  'p-1.5 transition-colors',
+                  viewMode === 'list' ? 'bg-ink text-bg' : 'text-ink-muted hover:text-ink',
+                )}
+              >
+                <List size={13} />
+              </button>
+            </div>
+
+            <button
+              className="flex items-center gap-1.5 text-caption text-ink-soft hover:text-ink transition-colors"
+              onClick={() => setFiltersOpen((o) => !o)}
+            >
+              <SlidersHorizontal size={15} strokeWidth={1.5} />
+              {activeFilters > 0 && (
+                <span className="w-4 h-4 bg-ink text-bg text-[9px] font-bold flex items-center justify-center rounded-full">
+                  {activeFilters}
+                </span>
+              )}
+            </button>
+          </div>
         </div>
 
         {/* Mobile: category chips (horizontal scroll) */}
@@ -301,14 +357,14 @@ export default function DiscoverPage() {
       <div className="px-5 md:px-12 lg:px-16 py-8 md:py-12">
         {isLoading ? (
           <>
-            {/* Mobile skeleton grid */}
-            <div className="grid grid-cols-2 gap-3 md:hidden">
-              {[...Array(6)].map((_, i) => <CardSkeleton key={i} />)}
-            </div>
-            {/* Desktop skeleton list */}
-            <div className="hidden md:block space-y-3">
-              {[...Array(8)].map((_, i) => (
-                <div key={i} className="h-16 bg-bg-sunken animate-pulse" />
+            <div className={cn(
+              'grid gap-3',
+              viewMode === 'grid'
+                ? 'grid-cols-2 sm:grid-cols-3 md:grid-cols-4'
+                : 'grid-cols-2 md:grid-cols-1',
+            )}>
+              {[...Array(viewMode === 'grid' ? 8 : 6)].map((_, i) => (
+                <CardSkeleton key={i} compact={viewMode === 'grid'} />
               ))}
             </div>
           </>
@@ -333,15 +389,24 @@ export default function DiscoverPage() {
               {category !== 'all' ? ` in ${CATEGORIES.find(c => c.value === category)?.label ?? category}` : ''}
             </p>
 
-            {/* Mobile: 2-col card grid */}
-            <div className="grid grid-cols-2 gap-3 md:hidden">
-              {profiles.map((p) => <ProfileCard key={p._id} profile={p} />)}
-            </div>
-
-            {/* Desktop: editorial list */}
-            <div className="hidden md:block">
-              <EditorialList profiles={profiles} />
-            </div>
+            {viewMode === 'grid' ? (
+              /* Grid view — default */
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
+                {profiles.map((p) => <ProfileCard key={p._id} profile={p} compact />)}
+              </div>
+            ) : (
+              /* List view */
+              <>
+                {/* Mobile list: larger 2-col cards */}
+                <div className="grid grid-cols-2 gap-3 md:hidden">
+                  {profiles.map((p) => <ProfileCard key={p._id} profile={p} />)}
+                </div>
+                {/* Desktop list: editorial */}
+                <div className="hidden md:block">
+                  <EditorialList profiles={profiles} />
+                </div>
+              </>
+            )}
 
             <div ref={sentinelRef} className="h-4 mt-8" />
             {isFetchingNextPage && (

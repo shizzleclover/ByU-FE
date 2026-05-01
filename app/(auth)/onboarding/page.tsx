@@ -25,19 +25,21 @@ const DEPARTMENTS = [
 
 const DEPT_OPTIONS = DEPARTMENTS.map((d) => ({ value: d, label: d }))
 const YEAR_OPTIONS = [
-  { value: '1', label: 'Freshman (Year 1)' },
-  { value: '2', label: 'Sophomore (Year 2)' },
-  { value: '3', label: 'Junior (Year 3)' },
-  { value: '4', label: 'Senior (Year 4)' },
-  { value: '5', label: 'Year 5' },
-  { value: '6', label: 'Year 6' },
-  { value: '7', label: 'Year 7+' },
+  { value: '100', label: '100 Level' },
+  { value: '200', label: '200 Level' },
+  { value: '300', label: '300 Level' },
+  { value: '400', label: '400 Level' },
+  { value: '500', label: '500 Level' },
+  { value: '600', label: '600 Level' },
+  { value: '700', label: '700 Level' },
+  { value: '800', label: '800 Level' },
+  { value: 'PG', label: 'Postgraduate' },
 ]
 
 const schema = z.object({
   bio: z.string().max(280).optional(),
   department: z.string().optional(),
-  year: z.coerce.number().min(1).max(7).optional(),
+  year: z.enum(['100','200','300','400','500','600','700','800','PG']).optional(),
 })
 
 type FormData = z.infer<typeof schema>
@@ -66,7 +68,10 @@ export default function OnboardingPage() {
       qc.invalidateQueries({ queryKey: AUTH_KEY })
       router.push('/dashboard')
     },
-    onError: () => toast.error('Failed to save. You can update this in your dashboard.'),
+    onError: () => {
+      toast.error('Failed to save. You can update this in your dashboard.')
+      router.push('/dashboard')
+    },
   })
 
   return (
@@ -76,7 +81,7 @@ export default function OnboardingPage() {
         disableStepIndicators
         backButtonText="← Back"
         nextButtonText="NEXT →"
-        onFinalStepCompleted={handleSubmit((d) => save.mutate(d))}
+        onFinalStepCompleted={handleSubmit((d) => save.mutate(d), () => router.push('/dashboard'))}
         nextButtonProps={{ disabled: save.isPending }}
         footerClassName="border-t border-line pt-6 mt-8"
       >
@@ -148,8 +153,8 @@ export default function OnboardingPage() {
                   <AppSelect
                     variant="form"
                     options={YEAR_OPTIONS}
-                    value={field.value ? String(field.value) : ''}
-                    onChange={(v) => field.onChange(v ? Number(v) : undefined)}
+                    value={field.value ?? ''}
+                    onChange={(v) => field.onChange(v || undefined)}
                     placeholder="Select your year"
                   />
                 )}

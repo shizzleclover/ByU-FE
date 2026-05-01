@@ -72,7 +72,7 @@ export default async function StoryPage({
             {username.toUpperCase()}
           </Link>
           {' · '}
-          {story.readingTime} MIN READ
+          {story.readingTimeMinutes} MIN READ
           {story.publishedAt
             ? ` · ${new Date(story.publishedAt).toLocaleDateString('en-US', {
                 day: 'numeric',
