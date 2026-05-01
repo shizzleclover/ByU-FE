@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="777" viewBox="0 0 960 777.943" role="img">
+  <g transform="translate(-553.482 -210.575)">
+    <rect width="885.473" height="567.096" rx="10" transform="translate(605.612 233.502)" fill="#e6e6e6"/>
+    <rect width="834.833" height="462.419" rx="8" transform="translate(630.931 304.63)" fill="#fff"/>
+    <path d="M10,0H875.473a10,10,0,0,1,10,10V37.618H0V10A10,10,0,0,1,10,0Z" transform="translate(605.233 233)" fill="#47d828"/>
+    <circle cx="7.544" cy="7.544" r="7.544" transform="translate(577.16 222.448)" fill="#fff"/>
+    <circle cx="7.544" cy="7.544" r="7.544" transform="translate(605.793 222.448)" fill="#fff"/>
+    <circle cx="7.544" cy="7.544" r="7.544" transform="translate(634.428 222.448)" fill="#fff"/>
+    <circle cx="57" cy="57" r="57" transform="translate(770 310)" fill="#ed9da0"/>
+    <path d="M521.221,399.351h0l-.908,1.637c8.084-19.924.733-44.475-13.689-59.5s-34.47-21.891-54.212-24.616c-14.655-2.023-29.867-1.964-43.8,3.4-20.179,7.774-35.6,25.769-48.469,44.49-5.888,8.563-11.677,18.324-11.091,29.026.545,9.932,6.44,18.36,11.267,26.786s8.86,18.88,5.395,28.077c-2.065,5.48-6.429,9.427-9.969,13.911a47.957,47.957,0,0,0,34.81-70.613l-23.972,3.622Z" transform="translate(388.113 131.165)" fill="#090814"/>
+  </g>
+</svg>

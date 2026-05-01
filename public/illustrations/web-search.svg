@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="769" viewBox="0 0 960 769.842" role="img">
+  <g transform="translate(-605.233 -233)">
+    <rect width="885.473" height="567.096" rx="10" transform="translate(605.612 233.502)" fill="#e6e6e6"/>
+    <rect width="834.833" height="462.419" rx="8" transform="translate(630.931 304.63)" fill="#fff"/>
+    <path d="M10,0H875.473a10,10,0,0,1,10,10V37.618H0V10A10,10,0,0,1,10,0Z" transform="translate(605.233 233)" fill="#47d828"/>
+    <circle cx="6.972" cy="6.972" r="6.972" transform="translate(626.216 245.26)" fill="#fff"/>
+    <circle cx="6.972" cy="6.972" r="6.972" transform="translate(652.681 245.26)" fill="#fff"/>
+    <circle cx="6.972" cy="6.972" r="6.972" transform="translate(679.146 245.26)" fill="#fff"/>
+    <path d="M748.156,224.194a185.686,185.686,0,1,0,10.528,274.229L986.45,690.612a17.111,17.111,0,0,0,22.095-26.134l-.025-.021L780.753,472.268a185.7,185.7,0,0,0-32.6-248.074ZM733.472,453.762a139.117,139.117,0,1,1-16.608-196.04h0A139.117,139.117,0,0,1,733.472,453.762Z" transform="translate(434.107 65.943)" fill="#3f3d56"/>
+  </g>
+</svg>

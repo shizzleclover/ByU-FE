@@ -1,0 +1,360 @@
+@import 'tailwindcss';
+@import 'tw-animate-css';
+
+/* Light-only — spec says v1 is light mode only */
+
+:root {
+  /* ── Surfaces ── */
+  --background: #FAFAF7;
+  --background-elevated: #FFFFFF;
+  --background-sunken: #F2F1EC;
+
+  /* ── Typography ── */
+  --foreground: #0F0F0E;
+  --foreground-soft: #3A3A37;
+  --foreground-muted: #6E6E69;
+  --foreground-faint: #B5B4AE;
+  --foreground-ghost: #E6E5DF;
+
+  /* ── Borders ── */
+  --border: #E6E5DF;
+  --border-strong: #0F0F0E;
+
+  /* ── State ── */
+  --state-success: #1F6F3D;
+  --state-warn: #A35A00;
+  --state-error: #A52334;
+  --state-info: #1F4F8F;
+
+  /* ── shadcn/radix compat aliases ── */
+  --card: var(--background-elevated);
+  --card-foreground: var(--foreground);
+  --popover: var(--background-elevated);
+  --popover-foreground: var(--foreground);
+  --primary: #0F0F0E;
+  --primary-foreground: #FAFAF7;
+  --secondary: var(--background-sunken);
+  --secondary-foreground: var(--foreground);
+  --muted: var(--background-sunken);
+  --muted-foreground: var(--foreground-muted);
+  --accent: var(--background-sunken);
+  --accent-foreground: var(--foreground);
+  --destructive: var(--state-error);
+  --destructive-foreground: #FAFAF7;
+  --input: var(--background-sunken);
+  --ring: var(--foreground);
+  --radius: 0rem;
+
+  /* ── Sidebar ── */
+  --sidebar: var(--background-elevated);
+  --sidebar-foreground: var(--foreground);
+  --sidebar-primary: var(--foreground);
+  --sidebar-primary-foreground: var(--background);
+  --sidebar-accent: var(--background-sunken);
+  --sidebar-accent-foreground: var(--foreground);
+  --sidebar-border: var(--border);
+  --sidebar-ring: var(--foreground);
+}
+
+@theme inline {
+  --font-sans: var(--font-space-grotesk);
+
+  /* ── Spec color tokens → Tailwind utilities ── */
+  --color-bg: var(--background);
+  --color-bg-elevated: var(--background-elevated);
+  --color-bg-sunken: var(--background-sunken);
+
+  --color-ink: var(--foreground);
+  --color-ink-soft: var(--foreground-soft);
+  --color-ink-muted: var(--foreground-muted);
+  --color-ink-faint: var(--foreground-faint);
+  --color-ink-ghost: var(--foreground-ghost);
+
+  --color-line: var(--border);
+  --color-line-strong: var(--border-strong);
+
+  --color-state-success: var(--state-success);
+  --color-state-warn: var(--state-warn);
+  --color-state-error: var(--state-error);
+  --color-state-info: var(--state-info);
+
+  /* ── shadcn compat ── */
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+
+  --radius-sm: 6px;
+  --radius-md: 6px;
+  --radius-lg: 10px;
+  --radius-xl: 12px;
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+    box-sizing: border-box;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    background-color: var(--background);
+    color: var(--foreground);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  ::selection {
+    background-color: var(--foreground);
+    color: var(--background);
+  }
+
+  /* Skip-to-content */
+  .skip-link {
+    position: absolute;
+    left: -9999px;
+    top: 1rem;
+    z-index: 9999;
+    padding: 0.5rem 1rem;
+    background: var(--foreground);
+    color: var(--background);
+    font-size: 14px;
+    font-weight: 500;
+  }
+
+  .skip-link:focus {
+    left: 1rem;
+  }
+}
+
+@layer components {
+  /* ── Type scale ── */
+  .text-overline {
+    font-size: 10px;
+    line-height: 1;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  .text-meta {
+    font-size: 12px;
+    line-height: 1.4;
+    font-weight: 500;
+  }
+
+  .text-caption {
+    font-size: 13px;
+    line-height: 1.5;
+    font-weight: 400;
+  }
+
+  .text-body {
+    font-size: 16px;
+    line-height: 1.6;
+    font-weight: 400;
+  }
+
+  .text-body-lg {
+    font-size: 18px;
+    line-height: 1.6;
+    font-weight: 400;
+  }
+
+  .text-lead {
+    font-size: 22px;
+    line-height: 1.45;
+    font-weight: 400;
+  }
+
+  .text-h6 {
+    font-size: 18px;
+    line-height: 1.3;
+    font-weight: 500;
+  }
+
+  .text-h5 {
+    font-size: 22px;
+    line-height: 1.25;
+    font-weight: 500;
+  }
+
+  .text-h4 {
+    font-size: 28px;
+    line-height: 1.2;
+    font-weight: 500;
+  }
+
+  .text-h3 {
+    font-size: 36px;
+    line-height: 1.15;
+    font-weight: 700;
+  }
+
+  .text-h2 {
+    font-size: 56px;
+    line-height: 1.05;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+  }
+
+  .text-h1 {
+    font-size: 88px;
+    line-height: 0.95;
+    font-weight: 700;
+    letter-spacing: -0.03em;
+  }
+
+  .text-display {
+    font-size: clamp(72px, 11vw, 180px);
+    line-height: 0.9;
+    font-weight: 700;
+    letter-spacing: -0.04em;
+  }
+
+  /* ── Hairlines ── */
+  .hairline {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 0;
+  }
+
+  .hairline-strong {
+    border: none;
+    border-top: 1px solid var(--foreground);
+    margin: 0;
+  }
+
+  /* ── Focus ring ── */
+  .focus-ring {
+    outline: 2px solid var(--foreground);
+    outline-offset: 2px;
+  }
+
+  /* ── Containers ── */
+  .container-content {
+    max-width: 1440px;
+    margin-inline: auto;
+    padding-inline: 1.5rem;
+  }
+
+  .container-narrow {
+    max-width: 840px;
+    margin-inline: auto;
+    padding-inline: 1.5rem;
+  }
+
+  .container-prose {
+    max-width: 640px;
+    margin-inline: auto;
+    padding-inline: 1.5rem;
+  }
+
+  .container-wide {
+    max-width: 1680px;
+    margin-inline: auto;
+    padding-inline: 1.5rem;
+  }
+
+  @media (min-width: 768px) {
+    .container-content,
+    .container-narrow,
+    .container-prose,
+    .container-wide { padding-inline: 3rem; }
+  }
+
+  @media (min-width: 1024px) {
+    .container-content,
+    .container-narrow,
+    .container-prose,
+    .container-wide { padding-inline: 4rem; }
+  }
+
+  /* ── Story/project prose body ── */
+  .prose-body {
+    font-size: 17px;
+    line-height: 1.75;
+    color: var(--foreground-soft);
+  }
+
+  .prose-body p:first-of-type::first-letter {
+    font-size: 4em;
+    line-height: 0.8;
+    float: left;
+    margin-right: 0.1em;
+    margin-top: 0.05em;
+    font-weight: 700;
+    color: var(--foreground);
+  }
+
+  .prose-body h2,
+  .prose-body h3 { color: var(--foreground); margin-top: 2.5em; }
+
+  .prose-body a {
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 3px;
+  }
+
+  .prose-body code {
+    background: var(--background-sunken);
+    padding: 0.15em 0.35em;
+    font-size: 0.875em;
+  }
+
+  .prose-body pre {
+    background: var(--foreground);
+    color: var(--background);
+    padding: 1.5rem;
+    overflow-x: auto;
+    margin-block: 2rem;
+  }
+
+  .prose-body blockquote {
+    border-left: 3px solid var(--foreground);
+    padding-left: 1.5rem;
+    margin-left: 0;
+    font-style: italic;
+    color: var(--foreground-soft);
+  }
+
+  /* ── Marquee rail ── */
+  @keyframes marquee {
+    from { transform: translateX(0); }
+    to { transform: translateX(-50%); }
+  }
+
+  .marquee-track {
+    animation: marquee 30s linear infinite;
+  }
+
+  .marquee-track:hover {
+    animation-play-state: paused;
+  }
+}
