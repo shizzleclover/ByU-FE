@@ -27,12 +27,12 @@ export default function AuthedLayout({ children }: { children: React.ReactNode }
   if (!isAuthenticated) return null
 
   return (
-    <div className="flex min-h-screen bg-bg">
+    <div className="flex h-screen overflow-hidden bg-bg">
       {/* Sidebar — desktop only */}
       <DashboardSidebar />
 
-      {/* Main content — add bottom padding on mobile for the tab bar */}
-      <div className="flex-1 flex flex-col min-w-0 pb-16 md:pb-0" id="main-content">
+      {/* Main content — scrolls independently, bottom padding on mobile for tab bar */}
+      <div className="flex-1 flex flex-col min-w-0 overflow-y-auto pb-16 md:pb-0" id="main-content">
         {children}
       </div>
 
