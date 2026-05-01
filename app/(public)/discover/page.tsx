@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useRef } from 'react'
+import { Suspense, useState, useEffect, useRef } from 'react'
 import { useSearchParams, useRouter } from 'next/navigation'
 import { useInfiniteQuery } from '@tanstack/react-query'
 import { Search, SlidersHorizontal, X, BadgeCheck, LayoutGrid, List } from 'lucide-react'
@@ -120,7 +120,7 @@ function CardSkeleton({ compact }: { compact?: boolean }) {
 
 type ViewMode = 'grid' | 'list'
 
-export default function DiscoverPage() {
+function DiscoverContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const [search, setSearch] = useState(searchParams.get('q') ?? '')
@@ -418,5 +418,13 @@ export default function DiscoverPage() {
         )}
       </div>
     </div>
+  )
+}
+
+export default function DiscoverPage() {
+  return (
+    <Suspense>
+      <DiscoverContent />
+    </Suspense>
   )
 }

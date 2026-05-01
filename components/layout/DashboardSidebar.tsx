@@ -5,11 +5,14 @@ import { usePathname } from 'next/navigation'
 import {
   User, LayoutGrid, Briefcase, FolderOpen, Link2,
   BookOpen, Phone, FileText, Bookmark, BarChart2,
-  Settings, LogOut, ChevronRight, Compass,
+  Settings, LogOut, Compass,
 } from 'lucide-react'
+import { useQuery } from '@tanstack/react-query'
 import { Logo } from '@/components/icons/Logo'
 import { cn } from '@/lib/utils'
 import { useAuth } from '@/hooks/useAuth'
+import { apiGet } from '@/lib/api'
+import type { Profile } from '@/types/api'
 
 const NAV_ITEMS = [
   { href: '/discover', label: 'Discover', icon: Compass },
@@ -30,6 +33,14 @@ export function DashboardSidebar() {
   const pathname = usePathname()
   const { user, signOut } = useAuth()
 
+  const { data: profile } = useQuery({
+    queryKey: ['profile', 'me'],
+    queryFn: () => apiGet<Profile>('/profile/me'),
+    staleTime: 60_000,
+  })
+
+  const score = profile?.completenessScore ?? 0
+
   const isActive = (href: string, exact?: boolean) =>
     exact ? pathname === href : pathname.startsWith(href)
 
@@ -41,11 +52,30 @@ export function DashboardSidebar() {
         <span className="text-overline text-ink-muted">BYU CONNECT</span>
       </div>
 
-      {/* Profile mini */}
+      {/* Profile mini + completeness */}
       {user && (
         <div className="px-5 py-4 border-b border-line">
           <p className="text-meta font-bold text-ink truncate">@{user.username}</p>
           <p className="text-caption text-ink-muted truncate">{user.email}</p>
+          {score < 100 && (
+            <Link href="/dashboard/profile" className="group block mt-3">
+              <div className="flex items-center justify-between mb-1">
+                <span className="text-[10px] font-bold tracking-[0.08em] text-ink-muted uppercase">Canvas</span>
+                <span className="text-[10px] font-bold text-ink-muted">{score}%</span>
+              </div>
+              <div className="h-1 bg-bg-sunken w-full">
+                <div
+                  className="h-full bg-ink transition-all duration-500"
+                  style={{ width: `${score}%` }}
+                />
+              </div>
+            </Link>
+          )}
+          {score === 100 && (
+            <p className="text-[10px] font-bold tracking-[0.08em] text-state-success uppercase mt-2">
+              ✓ Canvas complete
+            </p>
+          )}
         </div>
       )}
 

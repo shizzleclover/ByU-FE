@@ -19,7 +19,7 @@ import {
 import { CSS } from '@dnd-kit/utilities'
 import { DashboardTopbar } from '@/components/layout/DashboardTopbar'
 import { AppSelect } from '@/components/ui/AppSelect'
-import { apiGet, apiPost, apiPatch } from '@/lib/api'
+import { apiPost, apiPatch } from '@/lib/api'
 import type { Project, UploadSignature } from '@/types/api'
 
 const MDEditor = dynamic(() => import('@uiw/react-md-editor'), { ssr: false })
@@ -52,12 +52,13 @@ async function uploadToCloudinary(file: File, sig: UploadSignature): Promise<Gal
   fd.append('timestamp', String(sig.timestamp))
   fd.append('signature', sig.signature)
   fd.append('folder', sig.folder)
+  // Do NOT append upload_preset — signed uploads don't use presets
   const res = await fetch(`https://api.cloudinary.com/v1_1/${sig.cloudName}/image/upload`, {
     method: 'POST',
     body: fd,
   })
   const data = await res.json()
-  if (!data.secure_url) throw new Error('Upload failed')
+  if (!data.secure_url) throw new Error(data.error?.message ?? 'Upload failed')
   return { url: data.secure_url as string, publicId: data.public_id as string }
 }
 
@@ -126,12 +127,13 @@ export default function ProjectEditor({ project }: Props) {
   const title = watch('title')
   const autoSlug = (t: string) => t.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')
 
-  const getSign = useCallback(() => apiGet<UploadSignature>('/upload/sign'), [])
+  const getSign = useCallback((type: 'cover' | 'gallery', resourceId?: string) =>
+    apiPost<UploadSignature>('/upload/sign', { type, resourceId }), [])
 
   const uploadCover = async (file: File) => {
     setCoverUploading(true)
     try {
-      const sig = await getSign()
+      const sig = await getSign('cover', project?._id)
       const result = await uploadToCloudinary(file, sig)
       setCoverUpload(result)
     } catch {
@@ -148,7 +150,7 @@ export default function ProjectEditor({ project }: Props) {
     }
     setGalleryUploading(true)
     try {
-      const sig = await getSign()
+      const sig = await getSign('gallery', project?._id)
       const results = await Promise.all(Array.from(files).map((f) => uploadToCloudinary(f, sig)))
       setGallery((prev) => [...prev, ...results])
     } catch {

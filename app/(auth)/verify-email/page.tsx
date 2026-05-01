@@ -1,6 +1,6 @@
 'use client'
 
-import { useRef, useState, useEffect } from 'react'
+import { Suspense, useRef, useState, useEffect } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { toast } from 'sonner'
 import { apiPost, setAccessToken } from '@/lib/api'
@@ -10,7 +10,7 @@ import type { AuthResponse } from '@/types/api'
 
 const RESEND_COOLDOWN = 60
 
-export default function VerifyEmailPage() {
+function VerifyEmailContent() {
   const [digits, setDigits] = useState(['', '', '', '', '', ''])
   const [loading, setLoading] = useState(false)
   const [cooldown, setCooldown] = useState(0)
@@ -185,5 +185,13 @@ export default function VerifyEmailPage() {
         )}
       </p>
     </>
+  )
+}
+
+export default function VerifyEmailPage() {
+  return (
+    <Suspense>
+      <VerifyEmailContent />
+    </Suspense>
   )
 }
