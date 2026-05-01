@@ -2,8 +2,8 @@
 
 import Link from 'next/link'
 import { useQuery } from '@tanstack/react-query'
-import { motion } from 'framer-motion'
 import { DashboardTopbar } from '@/components/layout/DashboardTopbar'
+import { VerifiedAnimation } from '@/components/ui/VerifiedAnimation'
 import { Hairline } from '@/components/editorial/Hairline'
 import { apiGet } from '@/lib/api'
 import { useAuth } from '@/hooks/useAuth'
@@ -86,27 +86,9 @@ export default function DashboardPage() {
 
         {/* Verification status */}
         {user?.studentEmailVerifiedAt ? (
-          <div className="flex items-center gap-4 border border-blue-200 bg-blue-50/50 px-5 py-4">
-            <div className="relative shrink-0">
-              <motion.div
-                className="absolute inset-0 rounded-full bg-blue-500/20"
-                animate={{ scale: [1, 1.5], opacity: [0.5, 0] }}
-                transition={{ duration: 2, repeat: Infinity, ease: 'easeOut' }}
-              />
-              <div className="relative w-9 h-9 rounded-full bg-blue-500 flex items-center justify-center shadow shadow-blue-500/30">
-                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                  <motion.path
-                    d="M4 8L6.5 10.5L12 5"
-                    stroke="white"
-                    strokeWidth="1.8"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    initial={{ pathLength: 0 }}
-                    animate={{ pathLength: 1 }}
-                    transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-                  />
-                </svg>
-              </div>
+          <div className="flex items-center gap-3 border border-blue-200 bg-blue-50/50 px-4 py-3">
+            <div className="shrink-0 -my-1">
+              <VerifiedAnimation size={48} />
             </div>
             <div className="flex-1 min-w-0">
               <p className="text-meta font-bold text-ink">Student Verified</p>

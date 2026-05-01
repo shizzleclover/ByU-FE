@@ -12,6 +12,7 @@ import { DashboardTopbar } from '@/components/layout/DashboardTopbar'
 import { apiPost } from '@/lib/api'
 import { useAuth, AUTH_KEY } from '@/hooks/useAuth'
 import { ease } from '@/lib/motion'
+import { VerifiedAnimation } from '@/components/ui/VerifiedAnimation'
 
 const DOMAIN = process.env.NEXT_PUBLIC_STUDENT_EMAIL_DOMAIN ?? 'student.babcock.edu.ng'
 
@@ -29,59 +30,6 @@ const otpSchema = z.object({
 type EmailForm = z.infer<typeof emailSchema>
 type OtpForm = z.infer<typeof otpSchema>
 
-function VerifiedBadge() {
-  return (
-    <motion.div
-      className="flex flex-col items-center gap-6 py-8"
-      initial={{ opacity: 0, scale: 0.8 }}
-      animate={{ opacity: 1, scale: 1 }}
-      transition={{ duration: 0.5, ease: ease.expoOut }}
-    >
-      {/* Animated blue checkmark */}
-      <div className="relative">
-        {/* Outer ring pulse */}
-        <motion.div
-          className="absolute inset-0 rounded-full bg-blue-500/20"
-          animate={{ scale: [1, 1.4, 1], opacity: [0.6, 0, 0.6] }}
-          transition={{ duration: 2.5, repeat: Infinity, ease: 'easeInOut' }}
-        />
-        {/* Badge circle */}
-        <motion.div
-          className="relative w-20 h-20 rounded-full bg-blue-500 flex items-center justify-center shadow-lg shadow-blue-500/30"
-          initial={{ scale: 0 }}
-          animate={{ scale: 1 }}
-          transition={{ delay: 0.1, duration: 0.5, ease: ease.expoOut }}
-        >
-          {/* Checkmark SVG drawn in */}
-          <svg width="36" height="36" viewBox="0 0 36 36" fill="none">
-            <motion.path
-              d="M9 18L15 24L27 12"
-              stroke="white"
-              strokeWidth="3"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              initial={{ pathLength: 0 }}
-              animate={{ pathLength: 1 }}
-              transition={{ delay: 0.4, duration: 0.5, ease: ease.out }}
-            />
-          </svg>
-        </motion.div>
-      </div>
-
-      <motion.div
-        className="text-center"
-        initial={{ opacity: 0, y: 10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.5, duration: 0.4, ease: ease.out }}
-      >
-        <p className="text-h5 font-bold text-ink mb-1">Student Verified</p>
-        <p className="text-caption text-ink-muted">
-          Your blue badge is now live on your canvas.
-        </p>
-      </motion.div>
-    </motion.div>
-  )
-}
 
 export default function VerificationPage() {
   const { user } = useAuth()
@@ -131,9 +79,11 @@ export default function VerificationPage() {
           {/* Already verified */}
           {isVerified ? (
             <div className="border border-blue-200 bg-blue-50/40 p-8">
-              <VerifiedBadge />
+              <div className="flex justify-center">
+                <VerifiedAnimation size={120} />
+              </div>
 
-              <div className="mt-6 space-y-2 text-center">
+              <div className="mt-4 space-y-2 text-center">
                 <p className="text-h6 font-bold text-ink">You&apos;re already verified</p>
                 <p className="text-caption text-ink-muted">
                   Your blue badge is live on your canvas and visible to everyone.
