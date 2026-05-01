@@ -59,6 +59,7 @@ export default async function ProjectPage({
             src={project.coverUrl}
             alt={`Cover image for ${project.title}`}
             fill
+            sizes="100vw"
             className="object-cover"
             priority
           />
@@ -111,7 +112,7 @@ export default async function ProjectPage({
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {project.gallery.map((img) => (
                 <div key={img._id ?? img.publicId} className="relative aspect-[4/3] overflow-hidden">
-                  <Image src={img.url} alt={img.caption ?? project.title} fill className="object-cover" />
+                  <Image src={img.url} alt={img.caption ?? project.title} fill sizes="(max-width: 768px) 100vw, 50vw" className="object-cover" />
                   {img.caption && (
                     <p className="absolute bottom-0 left-0 right-0 bg-ink/60 text-bg text-caption px-3 py-2">
                       {img.caption}

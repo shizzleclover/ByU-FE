@@ -70,7 +70,7 @@ function SortableGalleryItem({ id, url, onRemove }: { id: string; url: string; o
       style={{ transform: CSS.Transform.toString(transform), transition }}
       className="relative aspect-square border border-line overflow-hidden group"
     >
-      <Image src={url} alt="" fill className="object-cover" />
+      <Image src={url} alt="" fill sizes="25vw" className="object-cover" />
       <button
         {...listeners}
         {...attributes}
@@ -224,7 +224,7 @@ export default function ProjectEditor({ project }: Props) {
                 <p className="text-overline text-ink-muted mb-3">COVER IMAGE</p>
                 {coverUpload ? (
                   <div className="relative aspect-video mb-3 border border-line overflow-hidden">
-                    <Image src={coverUpload.url} alt="Cover" fill className="object-cover" />
+                    <Image src={coverUpload.url} alt="Cover" fill sizes="(max-width: 1024px) 100vw, 640px" className="object-cover" />
                     <button
                       type="button"
                       onClick={() => setCoverUpload(null)}
@@ -426,7 +426,7 @@ export default function ProjectEditor({ project }: Props) {
             <div className="border border-line bg-bg">
               {coverUpload ? (
                 <div className="aspect-video relative overflow-hidden">
-                  <Image src={coverUpload.url} alt="" fill className="object-cover" />
+                  <Image src={coverUpload.url} alt="" fill sizes="360px" className="object-cover" />
                 </div>
               ) : (
                 <div className="aspect-video bg-bg-elevated flex items-center justify-center">

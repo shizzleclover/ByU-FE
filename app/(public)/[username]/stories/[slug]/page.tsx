@@ -57,6 +57,7 @@ export default async function StoryPage({
             src={story.coverUrl}
             alt={story.title}
             fill
+            sizes="100vw"
             className="object-cover"
             priority
           />

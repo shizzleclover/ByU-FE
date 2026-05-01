@@ -48,6 +48,7 @@ export function CanvasView({ canvas }: Props) {
                   src={profile.avatarUrl}
                   alt={`${profile.fullName}'s photo`}
                   fill
+                  sizes="96px"
                   className="object-cover"
                   priority
                 />
@@ -218,6 +219,7 @@ function CanvasProjects({ projects, username }: {
                       src={project.coverUrl}
                       alt={`Cover image for ${project.title}`}
                       fill
+                      sizes="(max-width: 768px) 100vw, 50vw"
                       className="object-cover transition-transform duration-700 group-hover:scale-[1.02]"
                     />
                   </div>
@@ -286,6 +288,7 @@ function CanvasStories({ stories, username }: {
                     src={story.coverUrl}
                     alt={story.title}
                     fill
+                    sizes="120px"
                     className="object-cover"
                   />
                 </div>

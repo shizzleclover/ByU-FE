@@ -11,7 +11,7 @@ import { toast } from 'sonner'
 import Image from 'next/image'
 import dynamic from 'next/dynamic'
 import { DashboardTopbar } from '@/components/layout/DashboardTopbar'
-import { apiGet, apiPost, apiPatch } from '@/lib/api'
+import { apiPost, apiPatch } from '@/lib/api'
 import type { Story, UploadSignature } from '@/types/api'
 
 const MDEditor = dynamic(() => import('@uiw/react-md-editor'), { ssr: false })
@@ -66,7 +66,7 @@ export default function StoryEditor({ story }: Props) {
 
   const autoSlug = (t: string) => t.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')
 
-  const getSign = useCallback(() => apiGet<UploadSignature>('/upload/sign'), [])
+  const getSign = useCallback(() => apiPost<UploadSignature>('/upload/sign', { type: 'story' }), [])
 
   const uploadCover = async (file: File) => {
     setCoverUploading(true)
@@ -127,7 +127,7 @@ export default function StoryEditor({ story }: Props) {
             <p className="text-overline text-ink-muted mb-3">COVER IMAGE</p>
             {coverUpload ? (
               <div className="relative aspect-[3/1] mb-3 border border-line overflow-hidden">
-                <Image src={coverUpload.url} alt="Cover" fill className="object-cover" />
+                <Image src={coverUpload.url} alt="Cover" fill sizes="(max-width: 1024px) 100vw, 800px" className="object-cover" />
                 <button
                   type="button"
                   onClick={() => setCoverUpload(null)}

@@ -79,6 +79,7 @@ export function EditorialList({ profiles, className }: Props) {
                       src={hovered.topProject.coverUrl}
                       alt={hovered.topProject.title}
                       fill
+                      sizes="(max-width: 768px) 100vw, 40vw"
                       className="object-cover"
                     />
                   </div>
@@ -88,6 +89,7 @@ export function EditorialList({ profiles, className }: Props) {
                       src={hovered.avatarUrl}
                       alt={hovered.fullName}
                       fill
+                      sizes="(max-width: 768px) 100vw, 40vw"
                       className="object-cover object-top"
                     />
                   </div>

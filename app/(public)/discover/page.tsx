@@ -56,6 +56,7 @@ function ProfileCard({ profile, compact }: { profile: DiscoveryProfile; compact?
             src={profile.topProject.coverUrl}
             alt={profile.topProject.title}
             fill
+            sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
             className="object-cover transition-transform duration-500 group-hover:scale-[1.03]"
           />
         ) : profile.avatarUrl ? (
@@ -63,6 +64,7 @@ function ProfileCard({ profile, compact }: { profile: DiscoveryProfile; compact?
             src={profile.avatarUrl}
             alt={profile.fullName}
             fill
+            sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
             className="object-cover object-top"
           />
         ) : (

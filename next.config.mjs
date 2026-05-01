@@ -5,14 +5,9 @@ const nextConfig = {
       {
         protocol: 'https',
         hostname: 'res.cloudinary.com',
-      },
-      {
-        protocol: 'https',
-        hostname: '**.cloudinary.com',
+        pathname: '/**',
       },
     ],
-    loader: 'custom',
-    loaderFile: './lib/cloudinaryLoader.ts',
   },
 }
 
