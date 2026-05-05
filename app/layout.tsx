@@ -24,10 +24,6 @@ export const metadata: Metadata = {
     default: 'ByU Connect',
   },
   description: 'A directory of student services, projects, and stories at Babcock University.',
-  icons: {
-    icon: '/icon.svg',
-    apple: '/apple-icon.png',
-  },
   openGraph: {
     siteName: 'ByU Connect',
     type: 'website',
