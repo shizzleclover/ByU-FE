@@ -13,10 +13,21 @@ export function useAuth() {
     queryKey: AUTH_KEY,
     queryFn: async () => {
       try {
-        const data = await apiGet<{ user: AuthUser; accessToken: string }>('/auth/me')
-        // /auth/me returns a fresh access token so we store it
-        if (data.accessToken) setAccessToken(data.accessToken)
-        return data.user
+        const data = await apiGet<{ user: Record<string, unknown>; profile: Record<string, unknown> | null }>('/auth/me')
+        // Merge user and profile fields into the AuthUser shape the frontend expects
+        return {
+          _id: String(data.user.id ?? data.user._id),
+          email: data.user.email as string,
+          role: data.user.role as 'user' | 'admin',
+          isVerified: !!data.user.isVerified,
+          isEmailVerified: data.user.isEmailVerified as boolean,
+          studentEmail: data.user.studentEmail as string | undefined,
+          studentEmailVerifiedAt: data.user.studentEmailVerifiedAt as string | undefined,
+          username: (data.profile?.username as string) ?? '',
+          isSuspended: (data.user.isSuspended as boolean) ?? false,
+          createdAt: (data.user.createdAt as string) ?? '',
+          updatedAt: (data.user.updatedAt as string) ?? '',
+        } as AuthUser
       } catch {
         return null
       }

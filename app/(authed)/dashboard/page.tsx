@@ -22,7 +22,7 @@ export default function DashboardPage() {
 
   const { data: analytics } = useQuery({
     queryKey: ['analytics', 'overview'],
-    queryFn: () => apiGet<AnalyticsOverview>('/analytics/overview'),
+    queryFn: () => apiGet<AnalyticsOverview>('/analytics/me/overview'),
     staleTime: 60_000,
   })
 

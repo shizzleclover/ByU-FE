@@ -107,7 +107,7 @@ export default function LinksPage() {
   })
 
   const reorder = useMutation({
-    mutationFn: (ids: string[]) => apiPatch('/links/reorder', { ids }),
+    mutationFn: (ids: string[]) => apiPatch('/links/reorder', { orderedIds: ids }),
   })
 
   const sensors = useSensors(

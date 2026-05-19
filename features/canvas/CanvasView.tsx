@@ -52,8 +52,8 @@ export function CanvasView({ canvas }: Props) {
 
   const layout = profile.canvasLayout?.length ? profile.canvasLayout : SECTION_ORDER_DEFAULT
 
-  const logOutreach = (contactId: string) => {
-    apiPost('/analytics/outreach', { contactId, profileId: profile._id }).catch(() => {})
+  const logOutreach = (contactType: string) => {
+    apiPost('/analytics/outreach', { profileId: profile._id, contactType }).catch(() => {})
   }
 
   return (
@@ -312,7 +312,7 @@ function ContactButton({ contact, onOutreach }: { contact: Contact; onOutreach: 
       href={href}
       target={contact.type === 'email' || contact.type === 'phone' ? '_self' : '_blank'}
       rel="noopener noreferrer"
-      onClick={() => onOutreach(contact._id)}
+      onClick={() => onOutreach(contact.type)}
       className={`inline-flex items-center gap-2 text-overline px-4 py-2.5 border transition-colors
         ${contact.isPrimary
           ? 'bg-ink text-bg border-ink hover:bg-ink-soft hover:border-ink-soft'

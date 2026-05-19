@@ -43,12 +43,12 @@ export default function LandingPage() {
   const heroY = useTransform(scrollYProgress, [0, 1], ['0%', '8%'])
 
   const { data: featuredData } = useQuery({
-    queryKey: ['discovery', 'featured'],
-    queryFn: () => apiGet<{ profiles: DiscoveryProfile[] }>('/discovery?isFeatured=true&limit=3'),
+    queryKey: ['discover', 'featured'],
+    queryFn: () => apiGet<DiscoveryProfile[]>('/discover/featured'),
     staleTime: 5 * 60_000,
   })
 
-  const featured = featuredData?.profiles ?? []
+  const featured = featuredData ?? []
 
   return (
     <>

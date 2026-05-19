@@ -65,7 +65,7 @@ export default function CanvasLayoutPage() {
   )
 
   const save = useMutation({
-    mutationFn: (sections: string[]) => apiPatch('/profile/me/canvas-layout', { sections }),
+    mutationFn: (sections: string[]) => apiPatch('/profile/me/canvas-layout', { canvasLayout: sections }),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['profile', 'me'] })
       toast.success('Layout saved.')

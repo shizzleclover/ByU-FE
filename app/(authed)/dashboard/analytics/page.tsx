@@ -10,7 +10,7 @@ import type { AnalyticsOverview } from '@/types/api'
 export default function AnalyticsPage() {
   const { data, isLoading } = useQuery({
     queryKey: ['analytics', 'overview'],
-    queryFn: () => apiGet<AnalyticsOverview>('/analytics/overview'),
+    queryFn: () => apiGet<AnalyticsOverview>('/analytics/me/overview'),
   })
 
   return (
