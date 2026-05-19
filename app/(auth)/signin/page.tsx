@@ -37,7 +37,13 @@ function SignInForm() {
       setAccessToken(res.accessToken)
       qc.setQueryData(AUTH_KEY, res.user)
       
-      const destination = res.user.role === 'admin' && redirect === '/dashboard' 
+      if (res.user.role === 'admin') {
+        document.cookie = 'is_admin=1; path=/; max-age=604800; SameSite=Lax'
+      } else {
+        document.cookie = 'is_admin=; path=/; max-age=0; SameSite=Lax'
+      }
+      
+      const destination = res.user.role === 'admin' && (redirect === '/dashboard' || redirect === '/admin' || redirect === '/')
         ? '/admin' 
         : redirect
         

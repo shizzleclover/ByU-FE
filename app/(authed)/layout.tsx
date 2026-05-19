@@ -7,14 +7,18 @@ import { DashboardMobileNav } from '@/components/layout/DashboardMobileNav'
 import { useAuth } from '@/hooks/useAuth'
 
 export default function AuthedLayout({ children }: { children: React.ReactNode }) {
-  const { isAuthenticated, isLoading } = useAuth()
+  const { isAuthenticated, isAdmin, isLoading } = useAuth()
   const router = useRouter()
 
   useEffect(() => {
-    if (!isLoading && !isAuthenticated) {
-      router.replace('/signin')
+    if (!isLoading) {
+      if (!isAuthenticated) {
+        router.replace('/signin')
+      } else if (isAdmin) {
+        router.replace('/admin')
+      }
     }
-  }, [isAuthenticated, isLoading, router])
+  }, [isAuthenticated, isAdmin, isLoading, router])
 
   if (isLoading) {
     return (

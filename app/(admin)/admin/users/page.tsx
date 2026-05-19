@@ -5,9 +5,9 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
-import { Search, ExternalLink, ShieldCheck } from 'lucide-react'
+import { Search, ExternalLink, ShieldCheck, Star } from 'lucide-react'
 import { DashboardTopbar } from '@/components/layout/DashboardTopbar'
-import { apiGet, apiPatch } from '@/lib/api'
+import { apiGet, apiPatch, apiPost, apiDelete } from '@/lib/api'
 import { useDebouncedValue } from '@/hooks/useDebouncedValue'
 
 interface AdminUser {
@@ -19,6 +19,7 @@ interface AdminUser {
   role: string
   isSuspended: boolean
   isVerified: boolean
+  isFeatured?: boolean
   createdAt: string
 }
 
@@ -36,6 +37,19 @@ export default function AdminUsersPage() {
     mutationFn: ({ id, payload }: { id: string; payload: object }) => apiPatch(`/admin/users/${id}`, payload),
     onSuccess: () => { qc.invalidateQueries({ queryKey: ['admin', 'users'] }); toast.success('User updated.') },
     onError: () => toast.error('Failed to update.'),
+  })
+
+  const toggleFeature = useMutation({
+    mutationFn: ({ userId, isFeatured }: { userId: string; isFeatured: boolean }) =>
+      isFeatured
+        ? apiDelete(`/admin/featured/${userId}`)
+        : apiPost('/admin/featured', { userId }),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['admin', 'users'] })
+      qc.invalidateQueries({ queryKey: ['admin', 'featured'] })
+      toast.success('Featured status updated.')
+    },
+    onError: () => toast.error('Failed to update featured status.'),
   })
 
   return (
@@ -121,6 +135,29 @@ export default function AdminUsersPage() {
                         >
                           <ExternalLink size={12} />
                         </Link>
+                        {user.role !== 'admin' && (
+                          user.isFeatured ? (
+                            <button
+                              onClick={() => toggleFeature.mutate({ userId: user._id, isFeatured: true })}
+                              disabled={toggleFeature.isPending}
+                              className="text-overline border border-state-warn text-state-warn px-3 py-1 hover:bg-state-warn hover:text-ink transition-colors flex items-center gap-1"
+                              title="Remove from featured"
+                            >
+                              <Star size={10} fill="currentColor" />
+                              FEATURED
+                            </button>
+                          ) : (
+                            <button
+                              onClick={() => toggleFeature.mutate({ userId: user._id, isFeatured: false })}
+                              disabled={toggleFeature.isPending}
+                              className="text-overline border border-line px-3 py-1 hover:border-ink transition-colors flex items-center gap-1"
+                              title="Add to featured"
+                            >
+                              <Star size={10} />
+                              FEATURE
+                            </button>
+                          )
+                        )}
                         {user.isSuspended ? (
                           <button
                             onClick={() => update.mutate({ id: user._id, payload: { isSuspended: false } })}

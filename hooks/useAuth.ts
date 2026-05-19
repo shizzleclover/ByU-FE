@@ -15,10 +15,19 @@ export function useAuth() {
       try {
         const data = await apiGet<{ user: Record<string, unknown>; profile: Record<string, unknown> | null }>('/auth/me')
         // Merge user and profile fields into the AuthUser shape the frontend expects
+        const role = data.user.role as 'user' | 'admin'
+        if (typeof window !== 'undefined') {
+          if (role === 'admin') {
+            document.cookie = 'is_admin=1; path=/; max-age=604800; SameSite=Lax'
+          } else {
+            document.cookie = 'is_admin=; path=/; max-age=0; SameSite=Lax'
+          }
+        }
+
         return {
           _id: String(data.user.id ?? data.user._id),
           email: data.user.email as string,
-          role: data.user.role as 'user' | 'admin',
+          role,
           isVerified: !!data.user.isVerified,
           isEmailVerified: data.user.isEmailVerified as boolean,
           studentEmail: data.user.studentEmail as string | undefined,
@@ -29,6 +38,9 @@ export function useAuth() {
           updatedAt: (data.user.updatedAt as string) ?? '',
         } as AuthUser
       } catch {
+        if (typeof window !== 'undefined') {
+          document.cookie = 'is_admin=; path=/; max-age=0; SameSite=Lax'
+        }
         return null
       }
     },
@@ -41,6 +53,9 @@ export function useAuth() {
       await apiPost('/auth/signout', {})
     } finally {
       setAccessToken(null)
+      if (typeof window !== 'undefined') {
+        document.cookie = 'is_admin=; path=/; max-age=0; SameSite=Lax'
+      }
       qc.setQueryData(AUTH_KEY, null)
       qc.clear()
       window.location.href = '/signin'

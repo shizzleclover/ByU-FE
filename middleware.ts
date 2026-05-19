@@ -8,10 +8,14 @@ const AUTH_PATHS = ['/signin', '/signup', '/forgot-password', '/reset-password']
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl
   const isAuthenticated = !!request.cookies.get('auth_present')?.value
+  const isAdmin = !!request.cookies.get('is_admin')?.value
 
   // Redirect authenticated users away from auth pages
   if (AUTH_PATHS.some((p) => pathname.startsWith(p))) {
     if (isAuthenticated) {
+      if (isAdmin) {
+        return NextResponse.redirect(new URL('/admin', request.url))
+      }
       return NextResponse.redirect(new URL('/dashboard', request.url))
     }
     return NextResponse.next()
@@ -24,6 +28,9 @@ export function middleware(request: NextRequest) {
       url.searchParams.set('redirect', pathname)
       return NextResponse.redirect(url)
     }
+    if (isAdmin) {
+      return NextResponse.redirect(new URL('/admin', request.url))
+    }
     return NextResponse.next()
   }
 
@@ -32,7 +39,9 @@ export function middleware(request: NextRequest) {
     if (!isAuthenticated) {
       return NextResponse.redirect(new URL('/signin', request.url))
     }
-    // Role check done in the (admin) layout — middleware just checks cookie presence
+    if (!isAdmin) {
+      return NextResponse.redirect(new URL('/dashboard', request.url))
+    }
     return NextResponse.next()
   }
 
