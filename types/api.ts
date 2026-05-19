@@ -173,6 +173,7 @@ export interface CanvasResponse {
     username: string
     fullName: string
     isVerified: boolean
+    isFeatured?: boolean
   }
   services: Service[]
   projects: Project[]

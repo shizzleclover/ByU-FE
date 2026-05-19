@@ -103,7 +103,10 @@ export function CanvasView({ canvas }: Props) {
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-3 flex-wrap">
               <h1 className="text-h1 font-bold text-ink leading-none">{profile.fullName}</h1>
-              {profile.isVerified && <VerifiedBadge />}
+              <div className="flex items-center gap-1.5 shrink-0">
+                {profile.isVerified && <VerifiedBadge />}
+                {profile.isFeatured && <FeaturedBadge />}
+              </div>
             </div>
 
             {profile.bio && (
@@ -249,6 +252,31 @@ function VerifiedBadge() {
             animate={{ pathLength: 1 }}
             transition={{ delay: 0.3, duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
           />
+        </svg>
+      </div>
+    </motion.div>
+  )
+}
+
+function FeaturedBadge() {
+  return (
+    <motion.div
+      className="relative inline-flex items-center justify-center w-7 h-7"
+      title="Featured Spotlight Profile"
+      initial={{ scale: 0 }}
+      animate={{ scale: 1 }}
+      transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+    >
+      {/* Pulse ring */}
+      <motion.span
+        className="absolute inset-0 rounded-full bg-amber-500/25"
+        animate={{ scale: [1, 1.5], opacity: [0.5, 0] }}
+        transition={{ duration: 2.2, repeat: Infinity, ease: 'easeOut' }}
+      />
+      {/* Circle */}
+      <div className="w-7 h-7 rounded-full bg-gradient-to-tr from-amber-500 to-yellow-400 flex items-center justify-center shadow-md shadow-amber-500/40">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="white">
+          <path d="M12 .587l3.668 7.431 8.2 1.192-5.934 5.787 1.4 8.168L12 18.896l-7.334 3.857 1.4-8.168L.132 9.21l8.2-1.192L12 .587z" />
         </svg>
       </div>
     </motion.div>
