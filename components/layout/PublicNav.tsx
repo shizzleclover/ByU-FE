@@ -28,7 +28,7 @@ export function PublicNav() {
   const [menuOpen, setMenuOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
   const pathname = usePathname()
-  const { isAuthenticated } = useAuth()
+  const { isAuthenticated, user } = useAuth()
 
   useEffect(() => {
     setMenuOpen(false)
@@ -46,7 +46,7 @@ export function PublicNav() {
   }, [menuOpen])
 
   const authLink = isAuthenticated
-    ? { href: '/dashboard', label: 'DASHBOARD' }
+    ? { href: user?.role === 'admin' ? '/admin' : '/dashboard', label: user?.role === 'admin' ? 'ADMIN PANEL' : 'DASHBOARD' }
     : { href: '/signin', label: 'SIGN IN' }
 
   const rightNav = [...RIGHT_NAV_BASE, authLink]

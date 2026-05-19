@@ -6,7 +6,7 @@ import { usePathname } from 'next/navigation'
 import {
   User, LayoutGrid, Briefcase, FolderOpen, Link2,
   BookOpen, Phone, FileText, Bookmark, BarChart2,
-  Settings, LogOut, Compass, MoreHorizontal, X,
+  Settings, LogOut, Compass, MoreHorizontal, X, ShieldCheck,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useAuth } from '@/hooks/useAuth'
@@ -156,6 +156,15 @@ export function DashboardMobileNav() {
 
         {/* Bottom actions */}
         <div className="px-3 py-3 border-t border-line flex flex-col gap-0.5">
+          {user?.role === 'admin' && (
+            <Link
+              href="/admin"
+              className="flex items-center gap-3 px-3 py-3 text-meta text-state-warn hover:bg-bg-sunken transition-colors rounded-sm"
+            >
+              <ShieldCheck size={16} strokeWidth={1.5} />
+              Admin Panel
+            </Link>
+          )}
           <Link
             href="/dashboard/settings"
             className="flex items-center gap-3 px-3 py-3 text-meta text-ink-soft hover:text-ink transition-colors rounded-sm hover:bg-bg-sunken"

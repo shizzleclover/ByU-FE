@@ -36,7 +36,12 @@ function SignInForm() {
       const res = await apiPost<AuthResponse>('/auth/signin', data)
       setAccessToken(res.accessToken)
       qc.setQueryData(AUTH_KEY, res.user)
-      router.push(redirect)
+      
+      const destination = res.user.role === 'admin' && redirect === '/dashboard' 
+        ? '/admin' 
+        : redirect
+        
+      router.push(destination)
     } catch (err: any) {
       toast.error(err?.response?.data?.error?.message ?? 'Sign in failed. Check your credentials.')
     }

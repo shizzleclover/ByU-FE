@@ -5,7 +5,7 @@ import { usePathname } from 'next/navigation'
 import {
   User, LayoutGrid, Briefcase, FolderOpen, Link2,
   BookOpen, Phone, FileText, Bookmark, BarChart2,
-  Settings, LogOut, Compass, BadgeCheck,
+  Settings, LogOut, Compass, BadgeCheck, ShieldCheck,
 } from 'lucide-react'
 import { useQuery } from '@tanstack/react-query'
 import { Logo } from '@/components/icons/Logo'
@@ -46,7 +46,7 @@ export function DashboardSidebar() {
     exact ? pathname === href : pathname.startsWith(href)
 
   return (
-    <aside className="hidden md:flex flex-col w-60 shrink-0 bg-bg-elevated border-r border-line h-screen sticky top-0 overflow-y-auto">
+    <aside className="hidden md:flex flex-col w-60 shrink-0 bg-bg-elevated border-r border-line h-full overflow-y-auto">
       {/* Header */}
       <div className="px-5 pt-5 pb-4 border-b border-line flex items-center gap-3">
         <Logo size={32} href="/" />
@@ -110,6 +110,15 @@ export function DashboardSidebar() {
 
       {/* Bottom */}
       <div className="px-3 py-4 border-t border-line flex flex-col gap-0.5">
+        {user?.role === 'admin' && (
+          <Link
+            href="/admin"
+            className="flex items-center gap-3 px-3 py-2.5 text-meta text-state-warn hover:bg-bg-sunken transition-colors"
+          >
+            <ShieldCheck size={15} strokeWidth={1.5} />
+            Admin Panel
+          </Link>
+        )}
         <Link
           href="/dashboard/settings"
           className="flex items-center gap-3 px-3 py-2.5 text-meta text-ink-soft hover:text-ink transition-colors"

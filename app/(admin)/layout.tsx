@@ -7,6 +7,7 @@ import { LayoutGrid, Users, Flag, Star, Upload, LogOut, ArrowLeft } from 'lucide
 import { Logo } from '@/components/icons/Logo'
 import { cn } from '@/lib/utils'
 import { useAuth } from '@/hooks/useAuth'
+import { AdminMobileNav } from '@/components/layout/AdminMobileNav'
 
 const ADMIN_NAV = [
   { href: '/admin', label: 'Overview', icon: LayoutGrid, exact: true },
@@ -24,12 +25,12 @@ function AdminSidebar() {
     exact ? pathname === href : pathname.startsWith(href)
 
   return (
-    <aside className="hidden md:flex flex-col w-56 shrink-0 bg-bg-elevated border-r border-line h-screen sticky top-0">
-      <div className="px-5 pt-5 pb-4 border-b border-line flex items-center gap-3">
-        <Logo size={28} href="/" />
+    <aside className="hidden md:flex flex-col w-60 shrink-0 bg-ink border-r border-ink-soft h-full overflow-y-auto">
+      <div className="px-5 pt-5 pb-4 border-b border-ink-soft flex items-center gap-3">
+        <Logo size={28} href="/admin" className="text-bg" />
         <div>
-          <p className="text-overline text-ink-muted">BYU CONNECT</p>
-          <p className="text-[10px] font-bold tracking-widest text-state-warn uppercase">ADMIN</p>
+          <p className="text-overline text-ink-faint">BYU CONNECT</p>
+          <p className="text-[10px] font-bold tracking-widest text-state-warn uppercase">MANAGEMENT</p>
         </div>
       </div>
 
@@ -41,11 +42,11 @@ function AdminSidebar() {
               key={href}
               href={href}
               className={cn(
-                'flex items-center gap-3 px-3 py-2.5 text-meta transition-colors relative',
-                active ? 'text-ink font-bold bg-bg-sunken' : 'text-ink-soft hover:text-ink hover:bg-bg-sunken',
+                'flex items-center gap-3 px-3 py-2.5 text-meta transition-colors relative rounded-md',
+                active ? 'text-bg font-bold bg-ink-soft' : 'text-ink-faint hover:text-bg hover:bg-ink-soft/50',
               )}
             >
-              {active && <span className="absolute left-0 top-1 bottom-1 w-0.5 bg-ink" />}
+              {active && <span className="absolute left-0 top-1.5 bottom-1.5 w-1 bg-state-warn rounded-r-full" />}
               <Icon size={15} strokeWidth={1.5} />
               {label}
             </Link>
@@ -53,18 +54,18 @@ function AdminSidebar() {
         })}
       </nav>
 
-      <div className="px-3 py-4 border-t border-line flex flex-col gap-0.5">
-        {user && <p className="px-3 py-1 text-caption text-ink-muted truncate">{user.email}</p>}
+      <div className="px-3 py-4 border-t border-ink-soft flex flex-col gap-0.5">
+        {user && <p className="px-3 py-2 text-caption text-ink-faint truncate">{user.email}</p>}
         <Link
           href="/dashboard"
-          className="flex items-center gap-3 px-3 py-2.5 text-meta text-ink-soft hover:text-ink transition-colors"
+          className="flex items-center gap-3 px-3 py-2.5 text-meta text-ink-faint hover:text-bg transition-colors rounded-md hover:bg-ink-soft/50"
         >
           <ArrowLeft size={15} strokeWidth={1.5} />
-          Back to Dashboard
+          Exit to Dashboard
         </Link>
         <button
           onClick={signOut}
-          className="flex items-center gap-3 px-3 py-2.5 text-meta text-ink-soft hover:text-ink transition-colors w-full text-left"
+          className="flex items-center gap-3 px-3 py-2.5 text-meta text-state-error hover:text-state-error transition-colors w-full text-left rounded-md hover:bg-state-error/10"
         >
           <LogOut size={15} strokeWidth={1.5} />
           Sign Out
@@ -98,9 +99,10 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   return (
     <div className="flex h-screen overflow-hidden bg-bg">
       <AdminSidebar />
-      <div className="flex-1 flex flex-col min-w-0 overflow-y-auto" id="main-content">
+      <div className="flex-1 flex flex-col min-w-0 overflow-y-auto pb-16 md:pb-0" id="main-content">
         {children}
       </div>
+      <AdminMobileNav />
     </div>
   )
 }
